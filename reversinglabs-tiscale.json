@@ -14,7 +14,7 @@
     "publisher": "ReversingLabs",
     "consolidate_widgets": true,
     "logo": "rl.png",
-    "license": "Copyright (c) ReversingLabs Inc 2016",
+    "license": "Copyright (c) ReversingLabs Inc 2016-2017",
     "configuration": {
       "base_url": {
         "data_type": "string",
