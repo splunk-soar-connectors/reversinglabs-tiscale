@@ -1,7 +1,7 @@
 {
-    "appid"    : "833e83bc-dda7-4af7-8d82-4a9083174f8c",
-    "name"   : "TISCALE",
-    "description": "This app supports using ReversingLabs Advanced File Anaysis to 'detonate file' on the TISCALE Advanced Malware Analysis Appliance.",
+    "appid": "833e83bc-dda7-4af7-8d82-4a9083174f8c",
+    "name": "TISCALE",
+    "description": "This app supports using ReversingLabs Advanced File Anaysis to 'detonate file' on the TISCALE Advanced Malware Analysis Appliance",
     "type": "sandbox",
     "main_module": "tiscale_connector.pyc",
     "app_version": "1.0.5",
@@ -47,7 +47,7 @@
     "actions": [
       {
         "action": "test connectivity",
-        "description": "Validate the asset configuration for connectivity. This action logs into the device to check the connection and credentials.",
+        "description": "Validate the asset configuration for connectivity by logging attempting to log into the device",
         "type": "test",
         "identifier": "test_asset_connectivity",
         "read_only": true,
@@ -61,7 +61,7 @@
       },
       {
         "action": "detonate file",
-        "description": "Analyze the file in the TISCALE Advanced Malware Analysis Appliance and retrieve the analysis results.",
+        "description": "Analyze the file in the TISCALE Advanced Malware Analysis Appliance and retrieve the analysis results",
         "verbose": "This action requires the input file to be present in the vault and therefore takes the vault id as the input parameter.",
         "type": "investigate",
         "identifier": "detonate_file",
@@ -74,7 +74,7 @@
             "description": "Vault ID of file to detonate",
             "data_type": "string",
             "order": 0,
-	    "contains": ["pe file", "pdf", "flash", "apk", "jar", "doc", "xls", "ppt"],
+            "contains": ["pe file", "pdf", "flash", "apk", "jar", "doc", "xls", "ppt"],
             "required": true,
             "primary": true
           },
@@ -89,10 +89,10 @@
         },
         "render": {
           "type": "custom",
-	  "width": 10,
+          "width": 10,
           "height": 5,
           "view": "reversinglabs_view.file_reputation",
-	  "title": "TISCALE Upload Status"
+          "title": "TISCALE Upload Status"
         },
         "output": [
             {
