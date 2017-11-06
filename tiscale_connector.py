@@ -35,7 +35,10 @@ import re
 import magic
 import shutil
 
-requests.packages.urllib3.disable_warnings()
+try:
+    requests.packages.urllib3.disable_warnings()
+except:
+    pass
 
 
 def __unicode__(self):
