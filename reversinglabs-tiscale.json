@@ -263,7 +263,7 @@
             {
               "data_path": "action_result.data.*.tc_report.*.info.file.file_name",
               "data_type": "string",
-              "contains" : ["file_name"]
+              "contains" : ["file name"]
             },
             {
               "data_path": "action_result.data.*.tc_report.*.info.file.file_subtype",
@@ -317,6 +317,14 @@
             },
             {
               "data_path": "action_result.data.*.classification.yara.*.tags.*",
+              "data_type": "string"
+            },
+            {
+              "data_path": "action_result.status",
+              "data_type": "string"
+            },
+            {
+              "data_path": "action_result.message",
               "data_type": "string"
             }
         ],

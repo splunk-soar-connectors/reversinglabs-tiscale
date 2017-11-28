@@ -12,17 +12,6 @@
 
 # import json
 
-from tiscale_consts import *
-
-
-def json_dump_view(provides, all_app_runs, context):
-
-    context['jsons'] = [json.dumps(item, separators=(',', ':'), sort_keys=True, indent=4) for item in j]
-    context['jsons'] = jsons = []
-    for summary, action_results in all_app_runs:
-        jsons.extend([x.id for x in action_results])
-    return 'json_dump.html'
-
 
 def all_results(provides, all_app_runs, context):
 
