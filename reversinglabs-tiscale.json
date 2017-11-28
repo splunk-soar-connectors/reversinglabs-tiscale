@@ -1,7 +1,7 @@
 {
     "appid": "833e83bc-dda7-4af7-8d82-4a9083174f8c",
     "name": "TISCALE",
-    "description": "This app supports using ReversingLabs Advanced File Anaysis to 'detonate file' on the TISCALE Advanced Malware Analysis Appliance",
+    "description": "This app supports investigative (Advanced File Anaysis) actions on the TISCALE Advanced Malware Analysis Appliance",
     "type": "sandbox",
     "main_module": "tiscale_connector.pyc",
     "app_version": "1.0.5",
