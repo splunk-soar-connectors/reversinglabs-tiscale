@@ -1,7 +1,7 @@
 {
     "appid": "833e83bc-dda7-4af7-8d82-4a9083174f8c",
     "name": "TISCALE",
-    "description": "This app supports using ReversingLabs Advanced File Anaysis to 'detonate file' on the TISCALE Advanced Malware Analysis Appliance",
+    "description": "This app implements investigative actions on the ReversingLabs TISCALE Malware Analysis Appliance",
     "type": "sandbox",
     "main_module": "tiscale_connector.pyc",
     "app_version": "1.0.6",
@@ -10,7 +10,7 @@
     "product_vendor": "ReversingLabs",
     "product_name": "TISCALE",
     "product_version_regex": ".*",
-    "min_phantom_version": "1.2.236",
+    "min_phantom_version": "3.0.251",
     "publisher": "ReversingLabs",
     "consolidate_widgets": true,
     "logo": "rl.png",
@@ -109,7 +109,14 @@
                     "data_path": "action_result.parameter.vault_id",
                     "data_type": "string",
                     "contains": [
-                        "vault id"
+                        "pe file",
+                        "pdf",
+                        "flash",
+                        "apk",
+                        "jar",
+                        "doc",
+                        "xls",
+                        "ppt"
                     ],
                     "column_name": "vault_id",
                     "column_order": 0
@@ -423,7 +430,7 @@
                     "data_path": "action_result.data.*.tc_report.*.info.file.file_name",
                     "data_type": "string",
                     "contains": [
-                        "file_name"
+                        "file name"
                     ]
                 },
                 {
@@ -505,6 +512,14 @@
                 },
                 {
                     "data_path": "action_result.data.*.classification.yara.*.tags.*",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
                     "data_type": "string"
                 }
             ],
