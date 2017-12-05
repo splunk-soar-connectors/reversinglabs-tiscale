@@ -35,11 +35,6 @@ import re
 import magic
 import shutil
 
-try:
-    requests.packages.urllib3.disable_warnings()
-except:
-    pass
-
 
 def __unicode__(self):
     return unicode(self.some_field) or u''
@@ -232,6 +227,7 @@ class TISCALEConnector(BaseConnector):
             params={},
             data={},
             filein=None,
+            files=None,
             parse_response=True,
             additional_succ_codes={}):
 
@@ -245,15 +241,21 @@ class TISCALEConnector(BaseConnector):
         # return (result.set_status(phantom.APP_ERROR, "Invalid method call: {0}
         # for requests module".format(method)), None)
 
+        if (files is None):
+            files = dict()
+
+        if (filein is not None):
+            files = {'file': filein}
+
         if method == 'post':
             try:
                 if(TISCALE_JSON_API_KEY in config):
                     # r = request_func(url, params=params, data=data, files=files, verify=config[phantom.APP_JSON_VERIFY])
-                    r = requests.post(url, files={'file': filein}, headers={
+                    r = requests.post(url, files=files, headers={
                                       'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY]})
                 else:
                     r = requests.post(url,
-                                      files={'file': filein})
+                                      files=files)
 
             except Exception as e:
                 return (
@@ -454,7 +456,7 @@ class TISCALEConnector(BaseConnector):
 
             if (phantom.is_success(ret_val)):
                 # Add a data dictionary into the result to store information
-                hash_data = action_result.add_data({'tiscale_report': response})
+                action_result.add_data({'tiscale_report': response})
 
                 self._handle_samples(action_result, response)
 

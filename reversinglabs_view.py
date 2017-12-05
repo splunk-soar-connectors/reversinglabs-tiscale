@@ -10,18 +10,13 @@
 #
 # --
 
-from phantom.json_keys import *
-
 
 def file_reputation(provides, all_results, context):
 
     print "reversinglabs_view: file_reputation " + str(all_results)
     results = []
     parameters = {}
-    i = 0
-    status_dict = {0: 'Unknown', 1: 'Known', 2: 'Suspicious', 3: 'Malicious'}
-    str_class = ['Unknown', 'Known', 'Suspicious', 'Malicious']
-    short_report = {}
+
     # report[0]['data'][0]['task_info']['report'][0]['classification']
     for summary, action_results in all_results:
         print "summary " + str(summary) + " action_results " + str(action_results)
