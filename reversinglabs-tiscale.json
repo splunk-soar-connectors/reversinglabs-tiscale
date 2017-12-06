@@ -20,8 +20,7 @@
             "data_type": "string",
             "description": "Base URL to TISCALE service",
             "required": true,
-            "order": 0,
-            "default": "http://tiscale"
+            "order": 0
         },
         "verify_server_cert": {
             "data_type": "boolean",
@@ -31,7 +30,7 @@
             "default": true
         },
         "api_key": {
-            "data_type": "string",
+            "data_type": "password",
             "description": "API Key",
             "order": 2,
             "required": false
@@ -81,7 +80,8 @@
                         "jar",
                         "doc",
                         "xls",
-                        "ppt"
+                        "ppt",
+                        "vault id"
                     ],
                     "required": true,
                     "primary": true
@@ -116,7 +116,8 @@
                         "jar",
                         "doc",
                         "xls",
-                        "ppt"
+                        "ppt",
+                        "vault id"
                     ],
                     "column_name": "vault_id",
                     "column_order": 0
@@ -520,6 +521,10 @@
                 },
                 {
                     "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 }
             ],
