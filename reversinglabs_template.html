@@ -1,0 +1,176 @@
+{% extends 'widgets/widget_template.html' %}
+{% load custom_template %}
+{% block body_color %}white{% endblock %}
+{% block body_text_color %}black{% endblock %}
+{% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
+{% block widget_content %}
+
+<style>
+
+    .widget-container {
+      width: 1170px !important;
+    }
+
+    body,
+    html {
+        margin:0;
+        padding:0;
+        color:#000;
+    }
+    #nav ul {
+        margin:0;
+        padding:0;
+        list-style:none;
+    }
+    #nav li {
+        display:inline;
+        margin:0;
+        padding:0;
+    }
+    #header {
+        padding:5px 10px;
+        background:#ddd;
+    }
+    h1 {
+       margin:0;
+    }
+    #wrap {
+        width:1060px;
+        margin:0 auto;
+        background-color:#fff;
+        padding-top: 30px;
+    }
+    p {
+        font-weight: 300;
+        margin-bottom: 20px;
+        white-space: normal;
+    }
+    #main {
+        float: left;
+        width: 540px;
+        padding: 0 30px 10px 0;
+    }
+    #sidebar {
+        width: 500px;
+        float: right;
+        padding: 0 0 0 10px;
+    }
+    .rl-data-label {
+        display: inline-block;
+        width: 170px;
+        font-weight: 500;
+    }
+    .rl-data-label-util {
+        padding-bottom: 50px;
+        float: left;
+    }
+    .tb-cell {
+        border-bottom: 1px solid #eaeaea;
+        padding: 6px 0px;
+        font-weight: 300;
+    }
+    .tb-cell:last-child {
+        border-bottom: none;
+    }
+    .rl-app-logo {
+        width: 48px;
+        height: 48px;
+        float: left;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+    #wrap a {
+        color: #f2293c;
+    }
+    .head {
+        position: relative;
+        margin: 0 0 25px;
+        font-weight: 300;
+        font-size: 22px;
+    }
+    .head:after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 50px;
+        height: 1px;
+        background-color: #f2293c;
+    }
+    .subhead {
+        position: relative;
+        margin: 0 0 18px 0;
+        padding-bottom: 2px;
+        font-size: 20px;
+        font-weight: 300;
+    }
+    .subhead:after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 35px;
+        height: 1px;
+        background-color: #f2293c;
+    }
+    .highlight {
+        font-weight: 500;
+    }
+    #footer {
+        clear:both;
+        padding:5px 10px;
+    }
+    #footer p {
+       margin:0;
+    }
+</style>
+
+<div id="reversinglabs">
+</div>
+
+<div id="wrap">
+
+    <div id="main">
+        <p><img class="rl-app-logo" src="http://www.reversinglabs.com/sites/files/new/titaniumcore-logo_0.svg" alt="TitaniumScale">The ReversingLabs TitaniumScale High Volume Malware Analysis Platform analyzes over 3,500 format families and obtains Threat Intelligence from ReversingLabs private repository of over 5.0 Billion goodware and malware samples with over 3,000 meta-data indicators per file. The TitaniumScale is a powerful platform for SOC/CERTs to analyze, pivot, hunt and collaborate on unknown or identified threats.</p>
+
+        <h2 class="head">ReversingLabs Advanced Malware Analysis Platform</h2>
+
+        <div class="tb-cell ellipsis rl-result-hash">
+            <span class="rl-data-label">File name:</span>
+            {{ results.0.file.file_name }}
+        </div>
+        <div class="tb-cell ellipsis rl-result-hash">
+            <span class="rl-data-label">Threat name: </span>
+            {{ results.0.classification.scan_results.0.result }}
+        </div>
+        <div class="tb-cell ellipsis rl-result-hash">
+            <span class="rl-data-label">File type: </span>
+            {{ results.0.info.file.file_type }}
+        </div>
+        <div class="tb-cell ellipsis rl-result-hash">
+            <span class="rl-data-label">File subtype: </span>
+            {{ results.0.info.file.file_subtype }}
+        </div>
+        <div class="tb-cell ellipsis rl-result-hash">
+            <span class="rl-data-label">Child objects: </span>
+            {{ results|length }}
+        </div>
+
+
+    </div>
+
+    <div id="sidebar">
+        {% for indicator in results.0.indicators %}
+        <p>{{ indicator.description }}</p>
+        {% endfor %}
+    </div>
+
+    <div id="footer">
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+
