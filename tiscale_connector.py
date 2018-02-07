@@ -763,40 +763,23 @@ class TISCALEConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_samples(self, action_result, samples):
-        # import pdb;pdb.set_trace()
         if (not samples):
             return
 
-        for sample in samples['tc_report']:
-
-            if (not sample):
-                continue
-
-            try:
-                # Get the data dictionary into the result to store information
-                hash_data = action_result.get_data()[0]
-                hash_data.update(sample)
-            except BaseException:
-                print "_handle_samples: Exception adding sample " + str(sample) + "\n ----------------------------------------------"
-                continue
-
-            # Update the data with what we got
-            print "_handle_samples: " + str(sample) + "\n ----------------------------------------------"
-            try:
-                positives = sample['classification']['classification']
-                if(positives == 0):
-                    status = 'UNKNOWN'
-                elif(positives == 1):
-                    status = 'KNOWN'
-                elif(positives == 2):
-                    status = 'SUSPICIOUS'
-                else:
-                    status = 'MALICIOUS'
-                # Update the summary
-                action_result.update_summary({'classification': status})
-            except BaseException:
-                action_result.update_summary({'classification': 'UNKOWN'})
-                continue
+        try:
+            status = samples['tc_report'][0]['classification']['classification']
+            if(status == 3):
+                status = 'MALICIOUS'
+            elif(status == 2):
+                status = 'SUSPICIOUS'
+            elif(status == 1):
+                status = 'KNOWN'
+            elif(status == 0):
+                status = 'UNKNOWN'
+            action_result.update_summary({'classification': status})
+        except:
+            action_result.update_summary({'classification': "UNKNOWN"})
+            return
 
         return
 

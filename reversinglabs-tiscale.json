@@ -4,7 +4,7 @@
     "description": "This app implements investigative actions on the ReversingLabs TISCALE Malware Analysis Appliance",
     "type": "sandbox",
     "main_module": "tiscale_connector.pyc",
-    "app_version": "1.0.9",
+    "app_version": "1.1.0",
     "utctime_updated": "2017-12-09T01:58:44.000000Z",
     "package_name": "phantom_tiscale",
     "product_vendor": "ReversingLabs",
