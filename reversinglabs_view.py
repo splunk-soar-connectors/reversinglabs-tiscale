@@ -1,6 +1,6 @@
 # --
 #
-# Copyright (c) ReversingLabs Inc 2016Copyright (c) ReversingLabs Inc 2016-2017
+# Copyright (c) ReversingLabs Inc 2016-2019
 #
 # This unpublished material is proprietary to ReversingLabs Inc.
 # All rights reserved.
