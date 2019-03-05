@@ -5,7 +5,7 @@
     "type": "sandbox",
     "main_module": "tiscale_connector.pyc",
     "app_version": "1.1.2",
-    "utctime_updated": "2019-03-01T22:53:27.000000Z",
+    "utctime_updated": "2019-03-05T23:32:27.000000Z",
     "package_name": "phantom_tiscale",
     "product_vendor": "ReversingLabs",
     "product_name": "TISCALE",
