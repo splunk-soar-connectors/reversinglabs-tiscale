@@ -1,11 +1,11 @@
 {
     "appid": "833e83bc-dda7-4af7-8d82-4a9083174f8c",
-    "name": "TISCALE",
-    "description": "This app implements investigative actions on the ReversingLabs TISCALE Malware Analysis Appliance",
+    "name": "RL TitaniumScale Enterprise File Visibility",
+    "description": "This app integrates with ReversingLabs TiScale Enterprise Scale File Visibility platform to automate analysis and investigative actions for file samples",
     "type": "sandbox",
     "main_module": "tiscale_connector.pyc",
-    "app_version": "1.1.1",
-    "utctime_updated": "2018-02-09T01:57:46.000000Z",
+    "app_version": "1.1.2",
+    "utctime_updated": "2019-03-11T23:08:33.000000Z",
     "package_name": "phantom_tiscale",
     "product_vendor": "ReversingLabs",
     "product_name": "TISCALE",
@@ -99,6 +99,12 @@
                 "title": "TISCALE Upload Status"
             },
             "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 3
+                },
                 {
                     "data_path": "action_result.parameter.vault_id",
                     "data_type": "string",
@@ -510,16 +516,20 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 }
             ],
             "versions": "EQ(*)"
