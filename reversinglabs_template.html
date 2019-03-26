@@ -1,7 +1,5 @@
 {% extends 'widgets/widget_template.html' %}
 {% load custom_template %}
-{% block body_color %}white{% endblock %}
-{% block body_text_color %}black{% endblock %}
 {% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
 {% block widget_content %}
 
@@ -15,7 +13,6 @@
     html {
         margin:0;
         padding:0;
-        color:#000;
     }
     #nav ul {
         margin:0;
@@ -34,10 +31,12 @@
     h1 {
        margin:0;
     }
+    h2.head::after {
+       display:none;
+    }
     #wrap {
         width:1060px;
         margin:0 auto;
-        background-color:#fff;
         padding-top: 30px;
     }
     p {
@@ -80,7 +79,6 @@
         margin-bottom: 10px;
     }
     #wrap a {
-        color: #f2293c;
     }
     .head {
         position: relative;
@@ -95,7 +93,6 @@
         left: 0;
         width: 50px;
         height: 1px;
-        background-color: #f2293c;
     }
     .subhead {
         position: relative;
@@ -111,7 +108,6 @@
         left: 0;
         width: 35px;
         height: 1px;
-        background-color: #f2293c;
     }
     .highlight {
         font-weight: 500;
@@ -128,10 +124,13 @@
 <div id="reversinglabs">
 </div>
 
+{% if results|length == 0 %}
+    <div class="tb-cell ellipsis rl-result-hash">
+        <span class="rl-data-label">No record found</span>
+    </div>
+{% else %}
 <div id="wrap">
-
     <div id="main">
-        <p><img class="rl-app-logo" src="http://www.reversinglabs.com/sites/files/new/titaniumcore-logo_0.svg" alt="TitaniumScale">The ReversingLabs TitaniumScale High Volume Malware Analysis Platform analyzes over 3,500 format families and obtains Threat Intelligence from ReversingLabs private repository of over 5.0 Billion goodware and malware samples with over 3,000 meta-data indicators per file. The TitaniumScale is a powerful platform for SOC/CERTs to analyze, pivot, hunt and collaborate on unknown or identified threats.</p>
 
         <h2 class="head">ReversingLabs Advanced Malware Analysis Platform</h2>
 
@@ -156,9 +155,7 @@
             {{ results|length }}
         </div>
 
-
     </div>
-
     <div id="sidebar">
         {% for indicator in results.0.indicators %}
         <p>{{ indicator.description }}</p>
@@ -167,10 +164,8 @@
 
     <div id="footer">
     </div>
-
 </div>
-
+{% endif %}
 {% endblock %}
-
 
 
