@@ -337,6 +337,7 @@ class TISCALEConnector(BaseConnector):
         return (phantom.APP_SUCCESS, files)
 
     def _test_connectivity(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
         # get the file from the app directory
         dirpath = os.path.dirname(inspect.getfile(self.__class__))
         filename = TISCALE_TEST_PDF_FILE
@@ -349,25 +350,25 @@ class TISCALEConnector(BaseConnector):
             self.set_status(phantom.APP_ERROR,
                             'Test pdf file not found at "{}"'.format(filepath))
             self.append_to_message('Test Connectivity failed')
-            return self.get_status()
+            return action_result.get_status()
 
         try:
             self.save_progress(
                 'Detonating test pdf file for checking connectivity')
             files = payload
             ret_val, response = self._make_rest_call(
-                '/api/tiscale/v1/upload', self, self.FILE_UPLOAD_ERROR_DESC,
+                '/api/tiscale/v1/upload', action_result, self.FILE_UPLOAD_ERROR_DESC,
                 method='post', filein=files)
         except BaseException:
             self.set_status(
                 phantom.APP_ERROR,
                 'Connectivity failed, check the server name and API key.\n')
             self.append_to_message('Test Connectivity failed.\n')
-            return self.get_status()
+            return action_result.get_status()
 
         if (phantom.is_fail(ret_val)):
             self.append_to_message('Test Connectivity Failed')
-            return self.get_status()
+            return action_result.get_status()
 
         return self.set_status_save_progress(
             phantom.APP_SUCCESS, 'Test Connectivity Passed')
@@ -742,7 +743,7 @@ class TISCALEConnector(BaseConnector):
         self.save_progress('Uploaded the file ' + str(ret_val))
 
         if (phantom.is_fail(ret_val)):
-            return self.get_status()
+            return action_result.get_status()
 
         # The first part is the uploaded file info
         data.update(response)
