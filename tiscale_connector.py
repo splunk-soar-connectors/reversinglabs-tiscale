@@ -12,32 +12,30 @@
 
 # Phantom imports
 import phantom.app as phantom
-from phantom.app import BaseConnector
-from phantom.app import ActionResult
+from phantom.app import ActionResult, BaseConnector
+
 try:
     from phantom.vault import Vault
 except BaseException:
     import phantom.vault as Vault
 
-import phantom.utils as ph_utils
-
-from tiscale_consts import *
-
-# Other imports used by this connector
-import os
-import time
 import inspect
 import json
-import requests
+# Other imports used by this connector
+import os
+import re
+import shutil
+import time
 # import xmltodict
 import uuid
-import re
-import magic
-import shutil
 
+import magic
+import phantom.utils as ph_utils
+import requests
 # Wheels import
-from rl_threat_hunting import file_report
-from rl_threat_hunting import tc_metadata_adapter
+from rl_threat_hunting import file_report, tc_metadata_adapter
+
+from tiscale_consts import *
 
 
 def __unicode__(self):
@@ -797,11 +795,11 @@ class TISCALEConnector(BaseConnector):
 
     def _create_hunting_report_name(self):
         product_name = self._get_product_name()
-        action_name  = self._get_action_name()
+        action_name = self._get_action_name()
         return '{}_{}_hunting_report.json'.format(product_name, action_name)
 
     def _get_product_name(self):
-        app_config   = self.get_app_json()
+        app_config = self.get_app_json()
         product_name = app_config['product_name']
         return product_name.replace(' ', '_')
 

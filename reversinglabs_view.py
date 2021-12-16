@@ -36,15 +36,15 @@ def hunting_visualization(provides, all_results, context):
                 if cloud_hunting:
                     complete, unresolved, status = organise_data_for_frontend(cloud_hunting)
 
-                    parameters['cloud_complete']        = complete
-                    parameters['cloud_unresolved']      = unresolved
+                    parameters['cloud_complete'] = complete
+                    parameters['cloud_unresolved'] = unresolved
                     parameters['cloud_unresolved_name'] = status
 
                 if local_hunting:
                     complete, unresolved, status = organise_data_for_frontend(local_hunting)
 
-                    parameters['local_complete']        = complete
-                    parameters['local_unresolved']      = unresolved
+                    parameters['local_complete'] = complete
+                    parameters['local_unresolved'] = unresolved
                     parameters['local_unresolved_name'] = status
 
     classification = parameters['readable_summary']['classification']['classification']
@@ -71,7 +71,7 @@ def hunting_visualization(provides, all_results, context):
 
 
 def organise_data_for_frontend(cloud_hunting):
-    complete   = {}
+    complete = {}
     unresolved = {}
     status = 'Unresolved'
 
@@ -86,9 +86,9 @@ def organise_data_for_frontend(cloud_hunting):
             status = query_status.title()
 
         elif query_status == 'completed':
-            query_collection        = complete
-            query['malicious']      = element.get('malicious')
-            query['description']    = element.get('description').title()
+            query_collection = complete
+            query['malicious'] = element.get('malicious')
+            query['description'] = element.get('description').title()
             query['classification'] = element.get('classification').upper()
 
         else:
@@ -109,8 +109,8 @@ def organise_data_for_frontend(cloud_hunting):
         else:
             readable_type = ' '.join(query_type.split('_')).title()
             query_collection[query_type] = {
-                'query_type' : readable_type,
-                'query_id'   : query_type,
+                'query_type': readable_type,
+                'query_id': query_type,
                 'query_terms': [query]
             }
 
@@ -119,10 +119,10 @@ def organise_data_for_frontend(cloud_hunting):
 
 def _get_hunting_execution_stats(hunting_meta_stats):
     stats_fields = {
-        "pending"   : [],
-        "skipped"   : [],
-        "completed" : [],
-        "failed"    : [],
+        "pending": [],
+        "skipped": [],
+        "completed": [],
+        "failed": [],
         "categories": [],
     }
 
