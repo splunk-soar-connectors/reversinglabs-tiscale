@@ -12,33 +12,31 @@
 
 # Phantom imports
 import phantom.app as phantom
-from phantom.app import BaseConnector
-from phantom.app import ActionResult
 import phantom.rules as ph_rules
+from phantom.app import ActionResult, BaseConnector
+
 try:
     from phantom.vault import Vault
 except BaseException:
     import phantom.vault as Vault
 
-import phantom.utils as ph_utils
-
-from tiscale_consts import *
-
-# Other imports used by this connector
-import os
-import time
 import inspect
 import json
-import requests
+# Other imports used by this connector
+import os
+import re
+import shutil
+import time
 # import xmltodict
 import uuid
-import re
-import magic
-import shutil
 
+import magic
+import phantom.utils as ph_utils
+import requests
 # Wheels import
-from rl_threat_hunting import file_report
-from rl_threat_hunting import tc_metadata_adapter
+from rl_threat_hunting import file_report, tc_metadata_adapter
+
+from tiscale_consts import *
 
 
 def __unicode__(self):
@@ -257,18 +255,18 @@ class TISCALEConnector(BaseConnector):
                 if(TISCALE_JSON_API_KEY in config):
                     # r = request_func(url, params=params, data=data, files=files, verify=config[phantom.APP_JSON_VERIFY])
                     r = requests.post(url, files=files, headers={
-                                      'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY], 'User-Agent': 'ReversingLabs Phantom TiScale v2.1'})
+                                      'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY],
+                                      'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
                 else:
                     r = requests.post(url,
                                       files=files,
-                                      headers={'User-Agent': 'ReversingLabs Phantom TiScale v2.1'})
+                                      headers={'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
 
             except Exception as e:
                 return (
                     result.set_status(
                         phantom.APP_ERROR,
-                        "REST POST Api to server failed " +
-                        str(e),
+                        "REST POST Api to server failed " + str(e),
                         e),
                     None)
         else:
@@ -280,17 +278,15 @@ class TISCALEConnector(BaseConnector):
                     r = requests.get(
                         url,
                         headers={
-                            'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY], 'User-Agent': 'ReversingLabs Phantom TiScale v2.1'})
+                            'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY],
+                            'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
                 else:
-                    r = requests.get(url, headers={'User-Agent': 'ReversingLabs Phantom TiScale v2.1'})
+                    r = requests.get(url, headers={'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
             except Exception as e:
                 return (
                     result.set_status(
                         phantom.APP_ERROR,
-                        "REST GET Api to server failed " +
-                        str(e) +
-                        " url: " +
-                        url,
+                        "REST GET Api to server failed " + str(e) + " url: " + url,
                         e),
                     None)
 
@@ -325,20 +321,13 @@ class TISCALEConnector(BaseConnector):
             filename = vault_id
 
         try:
-            # if (hasattr(Vault, 'get_file_path')):
-            #     payload = open(Vault.get_file_path(vault_id), 'rb')
-            # else:
-            #     payload = open(
-            #         Vault.get_vault_file(vault_id),
-            #         'rb')  # pylint: disable=E1101
             success, msg, files_array = ph_rules.vault_info(vault_id=vault_id)
             if not success:
                 return (action_result.set_status(phantom.APP_ERROR,
-                        f'Unable to get Vault item details. Error Details: {msg} container:{self.get_container_id()} vault:{vault_id}'),
+                        f'Unable to get Vault item details. Error Details: {msg}'),
                         None)
             file_data = list(files_array)[0]
             payload = open(file_data['path'], 'rb').read()
-            
 
         except BaseException:
             return (
@@ -654,11 +643,11 @@ class TISCALEConnector(BaseConnector):
 
     def _create_hunting_report_name(self):
         product_name = self._get_product_name()
-        action_name  = self._get_action_name()
+        action_name = self._get_action_name()
         return '{}_{}_hunting_report.json'.format(product_name, action_name)
 
     def _get_product_name(self):
-        app_config   = self.get_app_json()
+        app_config = self.get_app_json()
         product_name = app_config['product_name']
         return product_name.replace(' ', '_')
 
