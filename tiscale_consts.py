@@ -11,7 +11,7 @@
 # --
 
 TISCALE_JSON_BASE_URL = "base_url"
-TISCALE_JSON_API_KEY = "api_key"
+TISCALE_JSON_API_KEY = "api_key"  # pragma: allowlist secret
 TISCALE_JSON_MALWARE = "malware"
 TISCALE_JSON_TASK_ID = "id"
 TISCALE_JSON_VAULT_ID = "file_vault_id"
@@ -31,7 +31,8 @@ TISCALE_ERR_REST_API = "REST Api Call returned error, status_code: {status_code}
 TISCALE_TEST_PDF_FILE = "tiscale_test_connectivity.pdf"
 TISCALE_SLEEP_SECS = 10
 TISCALE_MSG_REPORT_PENDING = "Report Pending"
-TISCALE_MSG_MAX_POLLS_REACHED = "Reached max polling attempts. Please use the MD5 or Sha256 of the file as a parameter to <b>get report</b> to query the report status."
+TISCALE_MSG_MAX_POLLS_REACHED = """Reached max polling attempts.
+Please use the MD5 or Sha256 of the file as a parameter to <b>get report</b> to query the report status."""
 
 # in minutes
 TISCALE_MAX_TIMEOUT_DEF = 10
