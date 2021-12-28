@@ -85,13 +85,11 @@ def organise_data_for_frontend(cloud_hunting):
         if query_status == 'pending' or query_status == 'skipped':
             query_collection = unresolved
             status = query_status.title()
-
         elif query_status == 'completed':
             query_collection = complete
             query['malicious'] = element.get('malicious')
             query['description'] = element.get('description').title()
             query['classification'] = element.get('classification').upper()
-
         else:
             continue
 
@@ -106,7 +104,6 @@ def organise_data_for_frontend(cloud_hunting):
                 continue
             query_terms.append(query)
             data['query_terms'] = query_terms
-
         else:
             readable_type = ' '.join(query_type.split('_')).title()
             query_collection[query_type] = {
