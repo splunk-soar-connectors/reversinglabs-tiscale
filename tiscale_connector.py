@@ -254,12 +254,13 @@ class TISCALEConnector(BaseConnector):
             try:
                 if(TISCALE_JSON_API_KEY in config):
                     # r = request_func(url, params=params, data=data, files=files, verify=config[phantom.APP_JSON_VERIFY])
-                    r = requests.post(url, files=files, headers={
+                    r = requests.post(url, files=files, timeout=10, headers={
                                       'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY],
                                       'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
                 else:
                     r = requests.post(url,
                                       files=files,
+                                      timeout=10,
                                       headers={'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
 
             except Exception as e:
@@ -277,11 +278,12 @@ class TISCALEConnector(BaseConnector):
                 if(TISCALE_JSON_API_KEY in config):
                     r = requests.get(
                         url,
+                        timeout=10,
                         headers={
                             'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY],
                             'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
                 else:
-                    r = requests.get(url, headers={'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
+                    r = requests.get(url, timeout=10, headers={'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
             except Exception as e:
                 return (
                     result.set_status(
