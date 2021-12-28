@@ -131,14 +131,14 @@
                 "hunting_report_vault_id": {
                     "description": "Threat hunting report that represents current state of the hunting workflow.",
                     "data_type": "string",
-                    "order": 1,
+                    "order": 2,
                     "required": false
                 },
                 "full_report": {
                     "description": "Receive full TiScale metadata in a response",
                     "verbose": "This boolean value will determine if the result is truncated report or a full one",
                     "data_type": "boolean",
-                    "order": 2,
+                    "order": 3,
                     "required": false,
                     "default": true
                 }
