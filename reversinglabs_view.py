@@ -60,10 +60,8 @@ def hunting_visualization(provides, all_results, context):
     for hunting_key, parameters_key in [('cloud_hunting', 'reordered_cloud_hunting'),
                                         ('local_hunting', 'reordered_local_hunting')]:
         if parameters['readable_summary'][hunting_key]:
-            parameters['readable_summary'][parameters_key] = _get_hunting_execution_stats
-            (
-                parameters['readable_summary'][hunting_key]
-            )
+            parameters['readable_summary'][parameters_key] = _get_hunting_execution_stats(
+                parameters['readable_summary'][hunting_key])
 
     context['parameters'] = parameters
     context['results'] = results
