@@ -29,22 +29,14 @@ import json
 # Other imports used by this connector
 import os
 import re
-import shutil
 import time
-# import xmltodict
-import uuid
 
-import magic
 import phantom.utils as ph_utils
 import requests
 # Wheels import
 from rl_threat_hunting import file_report, tc_metadata_adapter
 
 from tiscale_consts import *
-
-
-def __unicode__(self):
-    return unicode(self.some_field) or u''
 
 
 class TISCALEConnector(BaseConnector):
