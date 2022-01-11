@@ -2,11 +2,11 @@
 # RL TitaniumScale Enterprise File Visibility
 
 Publisher: ReversingLabs  
-Connector Version: 1\.1\.3  
+Connector Version: 2\.2\.0  
 Product Vendor: ReversingLabs  
 Product Name: TISCALE  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 4\.0\.1068  
+Minimum Product Version: 5\.0\.0  
 
 This app integrates with ReversingLabs TiScale Enterprise Scale File Visibility platform to automate analysis and investigative actions for file samples
 
@@ -81,8 +81,10 @@ This action requires the input file to be present in the vault and therefore tak
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**vault\_id** |  required  | Vault ID of file to detonate | string |  `pe file`  `pdf`  `flash`  `apk`  `jar`  `doc`  `xls`  `ppt`  `vault id` 
-**file\_name** |  optional  | Filename to use | string |  `file name` 
+**file_vault_id** |  required  | Vault ID of file to detonate | string |  `pe file`  `pdf`  `flash`  `apk`  `jar`  `doc`  `xls`  `ppt`  `vault id` 
+**file_name** |  optional  | Filename to use | string |  `file name` 
+**hunting_report_vault_id** |  optional  | "Threat hunting report that represents current state of the hunting workflow | string |  
+**full_report** |  optional  | "Receive full TiScale metadata in a response | boolean |  
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS

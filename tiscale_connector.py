@@ -1,15 +1,19 @@
-# --
+# File: tiscale_connector.py
 #
-# Copyright (c) ReversingLabs Inc 2016Copyright (c) ReversingLabs Inc 2016-2021
+# Copyright (c) 2016-2022 Splunk Inc.
 #
-# This unpublished material is proprietary to ReversingLabs Inc.
-# All rights reserved.
-# Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of ReversingLabs Inc.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# --
-
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+#
+#
 # Phantom imports
 import phantom.app as phantom
 import phantom.rules as ph_rules
@@ -484,64 +488,6 @@ class TISCALEConnector(BaseConnector):
                 TISCALE_MSG_MAX_POLLS_REACHED),
             None)
 
-    def _save_file_to_vault(self, action_result, response, sample_hash):
-
-        # Create a tmp directory on the vault partition
-        guid = uuid.uuid4()
-        local_dir = '/vault/tmp/{}'.format(guid)
-        self.save_progress("Using temp directory: {0}".format(guid))
-
-        try:
-            os.makedirs(local_dir)
-        except Exception as e:
-            return action_result.set_status(
-                phantom.APP_ERROR,
-                "Unable to create temporary folder '/vault/tmp'.", e)
-
-        file_path = "{0}/{1}".format(local_dir, sample_hash)
-
-        # open and download the file
-        with open(file_path, 'wb') as f:
-            f.write(response.content)
-
-        contains = []
-        file_ext = ''
-        magic_str = magic.from_file(file_path)
-        for regex, cur_contains, extension in self.MAGIC_FORMATS:
-            if regex.match(magic_str):
-                contains.extend(cur_contains)
-                if (not file_ext):
-                    file_ext = extension
-
-        file_name = '{}{}'.format(sample_hash, file_ext)
-
-        # move the file to the vault
-        vault_ret_dict = Vault.add_attachment(
-            file_path, self.get_container_id(),
-            file_name=file_name, metadata={'contains': contains})
-        curr_data = {}
-
-        if (vault_ret_dict['succeeded']):
-            curr_data[phantom.APP_JSON_VAULT_ID] = vault_ret_dict[phantom.APP_JSON_HASH]
-            curr_data[phantom.APP_JSON_NAME] = file_name
-            action_result.add_data(curr_data)
-            wanted_keys = [phantom.APP_JSON_VAULT_ID, phantom.APP_JSON_NAME]
-            summary = {x: curr_data[x] for x in wanted_keys}
-            if (contains):
-                summary.update({'file_type': ','.join(contains)})
-            action_result.update_summary(summary)
-            action_result.set_status(phantom.APP_SUCCESS)
-        else:
-            action_result.set_status(
-                phantom.APP_ERROR,
-                phantom.APP_ERR_FILE_ADD_TO_VAULT)
-            action_result.append_to_message(vault_ret_dict['message'])
-
-        # remove the /tmp/<> temporary directory
-        shutil.rmtree(local_dir)
-
-        return action_result.get_status()
-
     def _get_platform_id(self, param):
 
         platform = param.get(TISCALE_JSON_PLATFORM)
@@ -629,19 +575,21 @@ class TISCALEConnector(BaseConnector):
     def _get_threat_hunting_state(parameters):
         hunting_report_vault_id = parameters.get(TISCALE_JSON_HUNTING_STATE)
         if hunting_report_vault_id:
-            hunting_report_file_path = Vault.get_file_path(hunting_report_vault_id)
-            return file_report.read_json(hunting_report_file_path)
+            success, msg, files_array = ph_rules.vault_info(vault_id=hunting_report_vault_id)
+            file_data = list(files_array)[0]
+            payload = open(file_data['path'], 'rb').read()
+            return json.loads(payload.decode('utf-8'))
 
     def _store_threat_hunting_state(self, hunting_meta):
         container_id = self.get_container_id()
         vault_file_name = self._create_hunting_report_name()
         dump_path = self._dump_report_in_file(hunting_meta, vault_file_name)
-        created_info = Vault.add_attachment(dump_path, container_id, file_name=vault_file_name)
+        success, message, vault_id = ph_rules.vault_add(container_id, dump_path, file_name=vault_file_name)
 
-        if created_info.get('succeeded'):
-            return created_info.get('vault_id')
-
-        raise VaultError('Storing threat hunting report failed.')
+        if success:
+            return vault_id
+        else:
+            raise VaultError('Storing threat hunting report failed: ' + message)
 
     def _create_hunting_report_name(self):
         product_name = self._get_product_name()

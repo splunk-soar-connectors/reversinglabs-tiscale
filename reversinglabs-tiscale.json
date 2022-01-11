@@ -5,7 +5,7 @@
     "type": "sandbox",
     "main_module": "tiscale_connector.py",
     "app_version": "2.2.0",
-    "utctime_updated": "2021-12-27T16:06:46.000000Z",
+    "utctime_updated": "2022-01-11T16:06:46.000000Z",
     "package_name": "phantom_tiscale",
     "product_vendor": "ReversingLabs",
     "product_name": "TISCALE",
@@ -15,7 +15,7 @@
     "consolidate_widgets": true,
     "logo": "logo_reversinglabs_tiscale.svg",
     "logo_dark": "logo_reversinglabs_dark_tiscale.svg",
-    "license": "Copyright (c) ReversingLabs Inc 2016-2021",
+    "license": "Copyright (c) 2016-2022 Splunk Inc.",
     "python_version": "3",
     "pip_dependencies": {
         "wheel": [
