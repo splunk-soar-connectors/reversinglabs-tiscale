@@ -1,43 +1,42 @@
-# --
+# File: tiscale_connector.py
 #
-# Copyright (c) ReversingLabs Inc 2016-2019
+# Copyright (c) 2016-2022 Splunk Inc.
 #
-# This unpublished material is proprietary to ReversingLabs Inc.
-# All rights reserved.
-# Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of ReversingLabs Inc.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# --
-
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+#
+#
 # Phantom imports
 import phantom.app as phantom
-from phantom.app import BaseConnector
-from phantom.app import ActionResult
+import phantom.rules as ph_rules
+from phantom.app import ActionResult, BaseConnector
+
 try:
     from phantom.vault import Vault
 except BaseException:
     import phantom.vault as Vault
 
-import phantom.utils as ph_utils
-
-from tiscale_consts import *
-
-# Other imports used by this connector
-import os
-import time
 import inspect
 import json
-import requests
-# import xmltodict
-import uuid
+# Other imports used by this connector
+import os
 import re
-import magic
-import shutil
+import time
 
+import phantom.utils as ph_utils
+import requests
+# Wheels import
+from rl_threat_hunting import file_report, tc_metadata_adapter
 
-def __unicode__(self):
-    return unicode(self.some_field) or u''
+from tiscale_consts import *
 
 
 class TISCALEConnector(BaseConnector):
@@ -184,7 +183,7 @@ class TISCALEConnector(BaseConnector):
         # pprint.pprint(response)
         response1['tiscale_link'] = "{0}{1}".format(
             self._base_url, "?q=" + data['hash'])
-        print "TISCALE link:" + response1['tiscale_link']
+        print("TISCALE link:" + str(response1['tiscale_link']))
         return response1
 
     def _parse_error(self, response, result, error_desc):
@@ -251,18 +250,20 @@ class TISCALEConnector(BaseConnector):
             try:
                 if(TISCALE_JSON_API_KEY in config):
                     # r = request_func(url, params=params, data=data, files=files, verify=config[phantom.APP_JSON_VERIFY])
-                    r = requests.post(url, files=files, headers={
-                                      'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY]})
+                    r = requests.post(url, files=files, timeout=10, headers={
+                                      'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY],
+                                      'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
                 else:
                     r = requests.post(url,
-                                      files=files)
+                                      files=files,
+                                      timeout=10,
+                                      headers={'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
 
             except Exception as e:
                 return (
                     result.set_status(
                         phantom.APP_ERROR,
-                        "REST POST Api to server failed " +
-                        str(e),
+                        "REST POST Api to server failed " + str(e),
                         e),
                     None)
         else:
@@ -273,18 +274,17 @@ class TISCALEConnector(BaseConnector):
                 if(TISCALE_JSON_API_KEY in config):
                     r = requests.get(
                         url,
+                        timeout=10,
                         headers={
-                            'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY]})
+                            'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY],
+                            'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
                 else:
-                    r = requests.get(url)
+                    r = requests.get(url, timeout=10, headers={'User-Agent': 'ReversingLabs Phantom TiScale v2.2'})
             except Exception as e:
                 return (
                     result.set_status(
                         phantom.APP_ERROR,
-                        "REST GET Api to server failed " +
-                        str(e) +
-                        " url: " +
-                        url,
+                        "REST GET Api to server failed " + str(e) + " url: " + url,
                         e),
                     None)
 
@@ -312,19 +312,21 @@ class TISCALEConnector(BaseConnector):
 
     def _get_file_dict(self, param, action_result):
 
-        vault_id = param['vault_id']
+        vault_id = param[TISCALE_JSON_VAULT_ID]
 
         filename = param.get('file_name')
         if not filename:
             filename = vault_id
 
         try:
-            if (hasattr(Vault, 'get_file_path')):
-                payload = open(Vault.get_file_path(vault_id), 'rb')
-            else:
-                payload = open(
-                    Vault.get_vault_file(vault_id),
-                    'rb')  # pylint: disable=E1101
+            success, msg, files_array = ph_rules.vault_info(vault_id=vault_id)
+            if not success:
+                return (action_result.set_status(phantom.APP_ERROR,
+                        f'Unable to get Vault item details. Error Details: {msg}'),
+                        None)
+            file_data = list(files_array)[0]
+            payload = open(file_data['path'], 'rb').read()
+
         except BaseException:
             return (
                 action_result.set_status(
@@ -337,7 +339,6 @@ class TISCALEConnector(BaseConnector):
         return (phantom.APP_SUCCESS, files)
 
     def _test_connectivity(self, param):
-        action_result = self.add_action_result(ActionResult(dict(param)))
         # get the file from the app directory
         dirpath = os.path.dirname(inspect.getfile(self.__class__))
         filename = TISCALE_TEST_PDF_FILE
@@ -350,25 +351,25 @@ class TISCALEConnector(BaseConnector):
             self.set_status(phantom.APP_ERROR,
                             'Test pdf file not found at "{}"'.format(filepath))
             self.append_to_message('Test Connectivity failed')
-            return action_result.get_status()
+            return self.get_status()
 
         try:
             self.save_progress(
                 'Detonating test pdf file for checking connectivity')
             files = payload
             ret_val, response = self._make_rest_call(
-                '/api/tiscale/v1/upload', action_result, self.FILE_UPLOAD_ERROR_DESC,
+                '/api/tiscale/v1/upload', self, self.FILE_UPLOAD_ERROR_DESC,
                 method='post', filein=files)
         except BaseException:
             self.set_status(
                 phantom.APP_ERROR,
                 'Connectivity failed, check the server name and API key.\n')
             self.append_to_message('Test Connectivity failed.\n')
-            return action_result.get_status()
+            return self.get_status()
 
         if (phantom.is_fail(ret_val)):
             self.append_to_message('Test Connectivity Failed')
-            return action_result.get_status()
+            return self.get_status()
 
         return self.set_status_save_progress(
             phantom.APP_SUCCESS, 'Test Connectivity Passed')
@@ -420,7 +421,7 @@ class TISCALEConnector(BaseConnector):
 
         return (phantom.APP_ERROR, None)
 
-    def _poll_task_status(self, task_id, action_result):
+    def _poll_task_status(self, task_id, action_result, full_report=False):
         polling_attempt = 0
 
         config = self.get_config()
@@ -443,8 +444,10 @@ class TISCALEConnector(BaseConnector):
                     polling_attempt,
                     max_polling_attempts))
 
+            endpoint = '{}?full=true'.format(task_id) if full_report else task_id
             ret_val, response = self._make_rest_call(
-                task_id, action_result, self.GET_REPORT_ERROR_DESC,
+                endpoint,
+                action_result, self.GET_REPORT_ERROR_DESC,
                 method='get', data=data,
                 additional_succ_codes={404: TISCALE_MSG_REPORT_PENDING})
 
@@ -477,105 +480,6 @@ class TISCALEConnector(BaseConnector):
                 TISCALE_MSG_MAX_POLLS_REACHED),
             None)
 
-    def _get_report(self, param):
-
-        action_result = self.add_action_result(ActionResult(dict(param)))
-
-        task_id = param[TISCALE_JSON_TASK_ID]
-
-        # Now poll for the result
-        ret_val, response = self._poll_task_status(task_id, action_result)
-
-        if (phantom.is_fail(ret_val)):
-            return action_result.get_status()
-
-        data = action_result.add_data({})
-
-        # The next part is the report
-        data.update(response)
-
-        malware = data.get('file_info', {}).get('malware', 'no')
-
-        action_result.update_summary({TISCALE_JSON_MALWARE: malware})
-
-        return action_result.set_status(phantom.APP_SUCCESS)
-
-    def _save_file_to_vault(self, action_result, response, sample_hash):
-
-        # Create a tmp directory on the vault partition
-        guid = uuid.uuid4()
-        local_dir = '/vault/tmp/{}'.format(guid)
-        self.save_progress("Using temp directory: {0}".format(guid))
-
-        try:
-            os.makedirs(local_dir)
-        except Exception as e:
-            return action_result.set_status(
-                phantom.APP_ERROR,
-                "Unable to create temporary folder '/vault/tmp'.", e)
-
-        file_path = "{0}/{1}".format(local_dir, sample_hash)
-
-        # open and download the file
-        with open(file_path, 'wb') as f:
-            f.write(response.content)
-
-        contains = []
-        file_ext = ''
-        magic_str = magic.from_file(file_path)
-        for regex, cur_contains, extension in self.MAGIC_FORMATS:
-            if regex.match(magic_str):
-                contains.extend(cur_contains)
-                if (not file_ext):
-                    file_ext = extension
-
-        file_name = '{}{}'.format(sample_hash, file_ext)
-
-        # move the file to the vault
-        vault_ret_dict = Vault.add_attachment(
-            file_path, self.get_container_id(),
-            file_name=file_name, metadata={'contains': contains})
-        curr_data = {}
-
-        if (vault_ret_dict['succeeded']):
-            curr_data[phantom.APP_JSON_VAULT_ID] = vault_ret_dict[phantom.APP_JSON_HASH]
-            curr_data[phantom.APP_JSON_NAME] = file_name
-            action_result.add_data(curr_data)
-            wanted_keys = [phantom.APP_JSON_VAULT_ID, phantom.APP_JSON_NAME]
-            summary = {x: curr_data[x] for x in wanted_keys}
-            if (contains):
-                summary.update({'file_type': ','.join(contains)})
-            action_result.update_summary(summary)
-            action_result.set_status(phantom.APP_SUCCESS)
-        else:
-            action_result.set_status(
-                phantom.APP_ERROR,
-                phantom.APP_ERR_FILE_ADD_TO_VAULT)
-            action_result.append_to_message(vault_ret_dict['message'])
-
-        # remove the /tmp/<> temporary directory
-        shutil.rmtree(local_dir)
-
-        return action_result.get_status()
-
-    def _get_sample(self, param):
-
-        action_result = self.add_action_result(ActionResult(dict(param)))
-
-        sample_hash = param[TISCALE_JSON_HASH]
-
-        self.save_progress('Getting file from TISCALE')
-
-        ret_val, response = self._make_rest_call(
-            '/get/sample', action_result, self.GET_SAMPLE_ERROR_DESC,
-            method='post', data={'hash': sample_hash},
-            parse_response=False)
-
-        if (phantom.is_fail(ret_val)):
-            return action_result.get_status()
-
-        return self._save_file_to_vault(action_result, response, sample_hash)
-
     def _get_platform_id(self, param):
 
         platform = param.get(TISCALE_JSON_PLATFORM)
@@ -589,29 +493,6 @@ class TISCALEConnector(BaseConnector):
             return None
 
         return self.PLATFORM_ID_MAPPING[platform]
-
-    def _get_pcap(self, param):
-
-        action_result = self.add_action_result(ActionResult(dict(param)))
-
-        sample_hash = param[TISCALE_JSON_HASH]
-        rest_data = {'hash': sample_hash}
-
-        platform_id = self._get_platform_id(param)
-
-        if (platform_id):
-            rest_data.update({'platform': platform_id})
-
-        self.save_progress('Getting pcap from TISCALE')
-
-        ret_val, response = self._make_rest_call(
-            '/get/pcap', action_result, self.GET_PCAP_ERROR_DESC, method='post',
-            data=rest_data, parse_response=False)
-
-        if (phantom.is_fail(ret_val)):
-            return action_result.get_status()
-
-        return self._save_file_to_vault(action_result, response, sample_hash)
 
     def validate_parameters(self, param):
         """Do our own validations instead of BaseConnector doing it for us"""
@@ -632,100 +513,13 @@ class TISCALEConnector(BaseConnector):
 
         return phantom.APP_SUCCESS
 
-    def _detonate_url(self, param):
-
-        action_result = self.add_action_result(ActionResult(dict(param)))
-
-        # add an http if not present
-        url = param[TISCALE_JSON_URL]
-
-        self.save_progress('Detonating URL')
-
-        ret_val, response = self._make_rest_call(
-            '/submit/link', action_result, self.FILE_UPLOAD_ERROR_DESC,
-            method='post', files={'link': ('', url)})
-
-        if (phantom.is_fail(ret_val)):
-            return action_result.get_status()
-
-        data = action_result.add_data({})
-
-        # The first part is the uploaded file info
-        data.update(response)
-
-        # get the sha256
-        task_id = response.get('submit-link-info', {}).get('sha256')
-
-        # Now poll for the result
-        ret_val, response = self._poll_task_status(task_id, action_result)
-
-        if (phantom.is_fail(ret_val)):
-            return action_result.get_status()
-
-        # The next part is the report
-        data.update(response)
-
-        malware = data.get('file_info', {}).get('malware', 'no')
-
-        action_result.update_summary({TISCALE_JSON_MALWARE: malware})
-
-        return action_result.set_status(phantom.APP_SUCCESS)
-
-    def _get_vault_file_sha256(self, vault_id, action_result):
-
-        self.save_progress('Getting the sha256 of the file')
-
-        sha256 = None
-        metadata = None
-
-        if (hasattr(Vault, 'get_file_info')):
-            try:
-                metadata = Vault.get_file_info(
-                    container_id=self.get_container_id(),
-                    vault_id=vault_id)[0]['metadata']
-            except Exception as e:
-                self.debug_print('Handled Exception:', e)
-                metadata = None
-        else:
-            try:
-                metadata = Vault.get_meta_by_hash(
-                    self.get_container_id(),
-                    vault_id, calculate=True)[0]
-            except BaseException:
-                self.debug_print('Handled Exception:', e)
-                metadata = None
-
-        if (not metadata):
-            return (
-                action_result.set_status(
-                    phantom.APP_ERROR,
-                    "Unable to get meta info of vault file"),
-                None)
-
-        try:
-            sha256 = metadata['sha256']
-        except Exception as e:
-            self.debug_print('Handled exception', e)
-            return (
-                action_result.set_status(
-                    phantom.APP_ERROR,
-                    "Unable to get meta info of vault file"),
-                None)
-
-        return (phantom.APP_SUCCESS, sha256)
-
     def _detonate_file(self, param):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         ret_val, files = self._get_file_dict(param, action_result)
 
-        if (phantom.is_fail(ret_val)):
-            return action_result.get_status()
-
-        # get the sha256 of the file
-        vault_id = param['vault_id']
-        ret_val, sha256 = self._get_vault_file_sha256(vault_id, action_result)
+        threat_hunting_state = self._get_threat_hunting_state(param)
 
         if (phantom.is_fail(ret_val)):
             return action_result.get_status()
@@ -743,17 +537,23 @@ class TISCALEConnector(BaseConnector):
         self.save_progress('Uploaded the file ' + str(ret_val))
 
         if (phantom.is_fail(ret_val)):
-            return action_result.get_status()
+            return self.get_status()
 
         # The first part is the uploaded file info
         data.update(response)
 
         # get the sha1
         task_id = response.get('task_url')
+        full_report = param.get('full_report')
         # import pdb;pdb.set_trace()
 
         # Now poll for the result
-        ret_val, response = self._poll_task_status(task_id, action_result)
+        ret_val, response = self._poll_task_status(task_id, action_result, full_report)
+
+        if response is not None:
+            hunting_meta = tc_metadata_adapter.parse_tc_metadata(response, threat_hunting_state)
+            hunting_meta_vault_id = self._store_threat_hunting_state(hunting_meta)
+            self._update_threat_hunting_state(action_result, hunting_meta, hunting_meta_vault_id)
 
         if (phantom.is_fail(ret_val)):
             return action_result.get_status()
@@ -762,6 +562,51 @@ class TISCALEConnector(BaseConnector):
         data.update(response)
 
         return action_result.set_status(phantom.APP_SUCCESS)
+
+    @staticmethod
+    def _get_threat_hunting_state(parameters):
+        hunting_report_vault_id = parameters.get(TISCALE_JSON_HUNTING_STATE)
+        if hunting_report_vault_id:
+            success, msg, files_array = ph_rules.vault_info(vault_id=hunting_report_vault_id)
+            file_data = list(files_array)[0]
+            payload = open(file_data['path'], 'rb').read()
+            return json.loads(payload.decode('utf-8'))
+
+    def _store_threat_hunting_state(self, hunting_meta):
+        container_id = self.get_container_id()
+        vault_file_name = self._create_hunting_report_name()
+        dump_path = self._dump_report_in_file(hunting_meta, vault_file_name)
+        success, message, vault_id = ph_rules.vault_add(container_id, dump_path, file_name=vault_file_name)
+
+        if success:
+            return vault_id
+        else:
+            raise VaultError('Storing threat hunting report failed: ' + message)
+
+    def _create_hunting_report_name(self):
+        product_name = self._get_product_name()
+        action_name = self._get_action_name()
+        return '{}_{}_hunting_report.json'.format(product_name, action_name)
+
+    def _get_product_name(self):
+        app_config = self.get_app_json()
+        product_name = app_config['product_name']
+        return product_name.replace(' ', '_')
+
+    def _get_action_name(self):
+        action_name = self.get_action_name()
+        return action_name.replace(' ', '_')
+
+    @staticmethod
+    def _dump_report_in_file(hunting_meta, file_name):
+        dump_dir = Vault.get_vault_tmp_dir()
+        dump_path = '{}/{}'.format(dump_dir, file_name)
+        return file_report.write_json(hunting_meta, dump_path)
+
+    @staticmethod
+    def _update_threat_hunting_state(action_result, hunting_report, hunting_report_vault_id):
+        action_result.add_data(hunting_report)
+        action_result.add_data({TISCALE_JSON_HUNTING_STATE: hunting_report_vault_id})
 
     def _handle_samples(self, action_result, samples):
         if (not samples):
@@ -794,17 +639,13 @@ class TISCALEConnector(BaseConnector):
 
         if (action_id == self.ACTION_ID_DETONATE_FILE):
             ret_val = self._detonate_file(param)
-        elif (action_id == self.ACTION_ID_DETONATE_URL):
-            ret_val = self._detonate_url(param)
-        elif (action_id == self.ACTION_ID_GET_REPORT):
-            ret_val = self._get_report(param)
-        elif (action_id == self.ACTION_ID_GET_SAMPLE):
-            ret_val = self._get_sample(param)
-        elif (action_id == self.ACTION_ID_GET_PCAP):
-            ret_val = self._get_pcap(param)
         elif (action_id == self.ACTION_ID_TEST_ASSET_CONNECTIVITY):
             ret_val = self._test_connectivity(param)
         return ret_val
+
+
+class VaultError(Exception):
+    pass
 
 
 if __name__ == '__main__':
@@ -812,7 +653,7 @@ if __name__ == '__main__':
     import sys
 
     if (len(sys.argv) < 2):
-        print "No test json specified as input"
+        print("No test json specified as input")
         exit(0)
 
     with open(sys.argv[1]) as f:
@@ -824,6 +665,6 @@ if __name__ == '__main__':
         connector.print_progress_message = True
         injson = json.dumps(in_json)
         ret_val = connector._handle_action(injson, None)
-        print json.dumps(json.loads(ret_val), indent=4)
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
