@@ -71,15 +71,13 @@
         "verify_server_cert": {
             "data_type": "boolean",
             "description": "Verify server certificate",
-            "required": true,
             "order": 1,
             "default": true
         },
         "api_key": {
             "data_type": "password",
             "description": "API Key",
-            "order": 2,
-            "required": false
+            "order": 2
         },
         "timeout": {
             "data_type": "numeric",
@@ -118,28 +116,22 @@
                     "description": "Vault ID of file to detonate",
                     "data_type": "string",
                     "order": 0,
-                    "required": true,
-                    "primary": true
+                    "required": true
                 },
                 "file_name": {
                     "description": "Filename to use",
-                    "verbose": "This value will be passed to the sandbox as the name of the file that is pickup up from the vault",
                     "data_type": "string",
-                    "order": 1,
-                    "required": false
+                    "order": 1
                 },
                 "hunting_report_vault_id": {
-                    "description": "Threat hunting report that represents current state of the hunting workflow.",
+                    "description": "Threat hunting report that represents current state of the hunting workflow",
                     "data_type": "string",
-                    "order": 2,
-                    "required": false
+                    "order": 2
                 },
                 "full_report": {
                     "description": "Receive full TiScale metadata in a response",
-                    "verbose": "This boolean value will determine if the result is truncated report or a full one",
                     "data_type": "boolean",
                     "order": 3,
-                    "required": false,
                     "default": true
                 }
             },
@@ -153,18 +145,14 @@
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
+                    "data_path": "action_result.parameter.file_name",
                     "data_type": "string"
                 },
                 {
@@ -172,7 +160,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.parameter.file_name",
+                    "data_path": "action_result.parameter.full_report",
                     "data_type": "string"
                 },
                 {
@@ -180,7 +168,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.parameter.full_report",
+                    "data_path": "action_result.data",
                     "data_type": "string"
                 },
                 {
@@ -200,16 +188,24 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.readable_summary.classification.threat.name",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.readable_summary.classification.threat.description",
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.readable_summary.classification.threat.factor",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.readable_summary.classification.threat.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",

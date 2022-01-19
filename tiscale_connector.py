@@ -519,7 +519,11 @@ class TISCALEConnector(BaseConnector):
 
         ret_val, files = self._get_file_dict(param, action_result)
 
-        threat_hunting_state = self._get_threat_hunting_state(param)
+        try:
+            threat_hunting_state = self._get_threat_hunting_state(param)
+        except BaseException:
+            action_result.set_status(phantom.APP_ERROR, "Unable to get Hunting Report Vault item details")
+            return action_result.get_status()
 
         if (phantom.is_fail(ret_val)):
             return action_result.get_status()
@@ -530,8 +534,12 @@ class TISCALEConnector(BaseConnector):
         self.save_progress('Uploading the file')
 
         # upload the file to the upload service
-        ret_val, response = self._make_rest_call(
-            '/api/tiscale/v1/upload', action_result, self.FILE_UPLOAD_ERROR_DESC, method='post', filein=files['file'][1])
+        try:
+            ret_val, response = self._make_rest_call(
+                '/api/tiscale/v1/upload', action_result, self.FILE_UPLOAD_ERROR_DESC, method='post', filein=files['file'][1])
+        except BaseException:
+            action_result.set_status(phantom.APP_ERROR, "Error making rest call to server")
+            return action_result.get_status()
 
         # Was not detonated before
         self.save_progress('Uploaded the file ' + str(ret_val))
