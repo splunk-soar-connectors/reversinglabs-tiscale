@@ -153,19 +153,32 @@
                 },
                 {
                     "data_path": "action_result.parameter.file_name",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "Test_Reversinglabs_1.exe"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.file_vault_id",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "03bc73261e9700198d996582ba43a641be831cb4"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.full_report",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        false,
+                        true
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.hunting_report_vault_id",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "03bc73261e9700198d996582ba43a641be831cb4"
+                    ]
                 },
                 {
                     "data_path": "action_result.data",
@@ -205,15 +218,24 @@
                 },
                 {
                     "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully retrieved results"
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)"

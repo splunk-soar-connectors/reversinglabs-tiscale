@@ -1,14 +1,16 @@
-# --
+# File: tiscale_consts.py
+# Copyright (c) 2016-2022 Splunk Inc.
 #
-# Copyright (c) ReversingLabs Inc 2016Copyright (c) ReversingLabs Inc 2016-2022
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This unpublished material is proprietary to ReversingLabs Inc.
-# All rights reserved.
-# Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of ReversingLabs Inc.
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
-# --
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
 
 TISCALE_JSON_BASE_URL = "base_url"
 TISCALE_JSON_API_KEY = "api_key"  # pragma: allowlist secret
