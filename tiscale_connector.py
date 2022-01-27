@@ -284,7 +284,7 @@ class TISCALEConnector(BaseConnector):
                 return (
                     result.set_status(
                         phantom.APP_ERROR,
-                        "REST GET API to server failed {} url: {}".format(e, url),
+                        TISCALE_ERR_GET_REST_API.format(e, url),
                         e),
                     None)
 
@@ -350,7 +350,7 @@ class TISCALEConnector(BaseConnector):
         except BaseException:
             self.set_status(phantom.APP_ERROR,
                             'Test pdf file not found at "{}"'.format(filepath))
-            self.append_to_message('Test Connectivity failed')
+            self.append_to_message(TISCALE_ERR_TEST_CONNECTIVITY)
             return self.get_status()
 
         try:
@@ -358,7 +358,7 @@ class TISCALEConnector(BaseConnector):
                 'Detonating test pdf file for checking connectivity')
             files = payload
             ret_val, response = self._make_rest_call(
-                '/api/tiscale/v1/upload', self, self.FILE_UPLOAD_ERROR_DESC,
+                TISCALE_DETONATE_FILE, self, self.FILE_UPLOAD_ERROR_DESC,
                 method='post', filein=files)
         except BaseException:
             self.set_status(
@@ -368,11 +368,11 @@ class TISCALEConnector(BaseConnector):
             return self.get_status()
 
         if (phantom.is_fail(ret_val)):
-            self.append_to_message('Test Connectivity Failed')
+            self.append_to_message(TISCALE_ERR_TEST_CONNECTIVITY)
             return self.get_status()
 
         return self.set_status_save_progress(
-            phantom.APP_SUCCESS, 'Test Connectivity Passed')
+            phantom.APP_SUCCESS, TISCALE_SUCC_TEST_CONNECTIVITY)
 
     def _normalize_into_list(self, input_dict, key):
         if (not input_dict):
@@ -407,7 +407,7 @@ class TISCALEConnector(BaseConnector):
         data = {'hash': task_id}
 
         ret_val, response = self._make_rest_call(
-            '/api/samples/', action_result, self.GET_REPORT_ERROR_DESC,
+            TISCALE_SAMPLES, action_result, self.GET_REPORT_ERROR_DESC,
             method='get', data=data)
 
         if (phantom.is_fail(ret_val)):
@@ -444,7 +444,7 @@ class TISCALEConnector(BaseConnector):
                     polling_attempt,
                     max_polling_attempts))
 
-            endpoint = '{}?full=true'.format(task_id) if full_report else task_id
+            endpoint = TISCALE_POLLING.format(task_id) if full_report else task_id
             ret_val, response = self._make_rest_call(
                 endpoint,
                 action_result, self.GET_REPORT_ERROR_DESC,
@@ -522,7 +522,7 @@ class TISCALEConnector(BaseConnector):
         try:
             threat_hunting_state = self._get_threat_hunting_state(param)
         except BaseException:
-            action_result.set_status(phantom.APP_ERROR, "Unable to get Hunting Report Vault item details")
+            action_result.set_status(phantom.APP_ERROR, TISCALE_ERR_HUNTING_REPORT_VAULT_ID)
             return action_result.get_status()
 
         if phantom.is_fail(ret_val):
@@ -536,9 +536,9 @@ class TISCALEConnector(BaseConnector):
         # upload the file to the upload service
         try:
             ret_val, response = self._make_rest_call(
-                '/api/tiscale/v1/upload', action_result, self.FILE_UPLOAD_ERROR_DESC, method='post', filein=files['file'][1])
+                TISCALE_DETONATE_FILE, action_result, self.FILE_UPLOAD_ERROR_DESC, method='post', filein=files['file'][1])
         except BaseException:
-            action_result.set_status(phantom.APP_ERROR, "Error making rest call to server")
+            action_result.set_status(phantom.APP_ERROR, TISCALE_ERR_REST_CALL_FAILDED)
             return action_result.get_status()
 
         # Was not detonated before

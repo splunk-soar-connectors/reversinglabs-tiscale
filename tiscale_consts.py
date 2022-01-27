@@ -21,8 +21,8 @@ TISCALE_JSON_URL = "url"
 TISCALE_JSON_HASH = "hash"
 TISCALE_JSON_PLATFORM = "platform"
 TISCALE_JSON_POLL_TIMEOUT_MINS = "timeout"
-TISCALE_JSON_HUNTING_META = 'hunting_meta'
-TISCALE_JSON_HUNTING_STATE = 'hunting_report_vault_id'
+TISCALE_JSON_HUNTING_META = "hunting_meta"
+TISCALE_JSON_HUNTING_STATE = "hunting_report_vault_id"
 
 TISCALE_ERR_UNABLE_TO_PARSE_REPLY = "Unable to parse reply from device"
 TISCALE_ERR_REPLY_FORMAT_KEY_MISSING = "None '{key}' missing in reply from device"
@@ -36,6 +36,16 @@ TISCALE_MSG_REPORT_PENDING = "Report Pending"
 TISCALE_USER_AGENT = "ReversingLabs Phantom TiScale v2.2"
 TISCALE_MSG_MAX_POLLS_REACHED = "Reached max polling attempts." \
     "Please use the MD5 or Sha256 of the file as a parameter to <b>get report</b> to query the report status."
+TISCALE_ERR_HUNTING_REPORT_VAULT_ID = "Unable to get Hunting Report Vault item details"
+TISCALE_ERR_REST_CALL_FAILDED = "Error making rest call to server"
+TISCALE_ERR_TEST_CONNECTIVITY = "Test Connectivity failed"
+TISCALE_SUCC_TEST_CONNECTIVITY = "Test Connectivity Passed"
+TISCALE_ERR_GET_REST_API = "REST GET API to server failed {} url: {}"
+
+# Endpoints
+TISCALE_DETONATE_FILE = "/api/tiscale/v1/upload"
+TISCALE_SAMPLES = "/api/samples/"
+TISCALE_POLLING = "{}?full=true"
 
 # in minutes
 TISCALE_MAX_TIMEOUT_DEF = 10
