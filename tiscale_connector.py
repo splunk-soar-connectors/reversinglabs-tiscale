@@ -183,7 +183,7 @@ class TISCALEConnector(BaseConnector):
         # pprint.pprint(response)
         response1['tiscale_link'] = "{0}{1}".format(
             self._base_url, "?q=" + data['hash'])
-        print("TISCALE link:" + str(response1['tiscale_link']))
+        self.debug_print("TISCALE link: {}".format(response1['tiscale_link']))
         return response1
 
     def _parse_error(self, response, result, error_desc):
@@ -248,7 +248,7 @@ class TISCALEConnector(BaseConnector):
 
         if method == 'post':
             try:
-                if(TISCALE_JSON_API_KEY in config):
+                if TISCALE_JSON_API_KEY in config:
                     # r = request_func(url, params=params, data=data, files=files, verify=config[phantom.APP_JSON_VERIFY])
                     r = requests.post(url, files=files, timeout=10, headers={
                                       'Authorization': 'Token %s' % config[TISCALE_JSON_API_KEY],
@@ -263,7 +263,7 @@ class TISCALEConnector(BaseConnector):
                 return (
                     result.set_status(
                         phantom.APP_ERROR,
-                        "REST POST Api to server failed " + str(e),
+                        "REST POST API to server failed {}".format(e),
                         e),
                     None)
         else:
@@ -271,7 +271,7 @@ class TISCALEConnector(BaseConnector):
                 # r = request_func(url, params=params, data=data, files=files, verify=config[phantom.APP_JSON_VERIFY])
                 url = endpoint
                 result.add_debug_data({'r_text': url})
-                if(TISCALE_JSON_API_KEY in config):
+                if TISCALE_JSON_API_KEY in config:
                     r = requests.get(
                         url,
                         timeout=10,
@@ -284,7 +284,7 @@ class TISCALEConnector(BaseConnector):
                 return (
                     result.set_status(
                         phantom.APP_ERROR,
-                        "REST GET Api to server failed " + str(e) + " url: " + url,
+                        "REST GET API to server failed {} url: {}".format(e, url),
                         e),
                     None)
 
@@ -324,7 +324,7 @@ class TISCALEConnector(BaseConnector):
                 return (action_result.set_status(phantom.APP_ERROR,
                         f'Unable to get Vault item details. Error Details: {msg}'),
                         None)
-            file_data = list(files_array)[0]
+            file_data = next(iter(files_array))
             payload = open(file_data['path'], 'rb').read()
 
         except BaseException:
@@ -525,7 +525,7 @@ class TISCALEConnector(BaseConnector):
             action_result.set_status(phantom.APP_ERROR, "Unable to get Hunting Report Vault item details")
             return action_result.get_status()
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         data = action_result.add_data({})
@@ -576,7 +576,7 @@ class TISCALEConnector(BaseConnector):
         hunting_report_vault_id = parameters.get(TISCALE_JSON_HUNTING_STATE)
         if hunting_report_vault_id:
             success, msg, files_array = ph_rules.vault_info(vault_id=hunting_report_vault_id)
-            file_data = list(files_array)[0]
+            file_data = next(iter(files_array))
             payload = open(file_data['path'], 'rb').read()
             return json.loads(payload.decode('utf-8'))
 

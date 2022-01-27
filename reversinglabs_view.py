@@ -130,7 +130,7 @@ def _get_hunting_execution_stats(hunting_meta_stats):
     for category, values in hunting_meta_stats.items():
         readable_category = ' '.join(category.split('_'))
         stats_fields['categories'].append(readable_category)
-        for key, value in list(values.items()):
+        for key, value in values.items():
             stats_fields[key].append(value)
 
     return stats_fields
