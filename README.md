@@ -2,7 +2,7 @@
 # RL TitaniumScale Enterprise File Visibility
 
 Publisher: ReversingLabs  
-Connector Version: 2\.2\.0  
+Connector Version: 2\.0\.3  
 Product Vendor: ReversingLabs  
 Product Name: TISCALE  
 Product Version Supported (regex): "\.\*"  
@@ -10,7 +10,20 @@ Minimum Product Version: 5\.0\.0
 
 This app integrates with ReversingLabs TiScale Enterprise Scale File Visibility platform to automate analysis and investigative actions for file samples
 
-
+[comment]: # " File: README.md"
+[comment]: # "  Copyright (c) 2016-2022 Splunk Inc."
+[comment]: # ""
+[comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
+[comment]: # "you may not use this file except in compliance with the License."
+[comment]: # "You may obtain a copy of the License at"
+[comment]: # ""
+[comment]: # "    http://www.apache.org/licenses/LICENSE-2.0"
+[comment]: # ""
+[comment]: # "Unless required by applicable law or agreed to in writing, software distributed under"
+[comment]: # "the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,"
+[comment]: # "either express or implied. See the License for the specific language governing permissions"
+[comment]: # "and limitations under the License."
+[comment]: # ""
 # ReversingLabs TitaniumScale
 
 This app supports using ReversingLabs Advanced File Analysis to 'detonate file' on the TitaniumScale
@@ -51,6 +64,7 @@ The below configuration variables are required for this Connector to operate.  T
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **base\_url** |  required  | string | Base URL to TISCALE service
+**verify\_server\_cert** |  optional  | boolean | Verify server certificate
 **api\_key** |  optional  | password | API Key
 **timeout** |  required  | numeric | Detonate timeout in mins
 
@@ -81,65 +95,28 @@ This action requires the input file to be present in the vault and therefore tak
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**file_vault_id** |  required  | Vault ID of file to detonate | string |  `pe file`  `pdf`  `flash`  `apk`  `jar`  `doc`  `xls`  `ppt`  `vault id` 
-**file_name** |  optional  | Filename to use | string |  `file name` 
-**hunting_report_vault_id** |  optional  | "Threat hunting report that represents current state of the hunting workflow | string |  
-**full_report** |  optional  | "Receive full TiScale metadata in a response | boolean |  
+**file\_vault\_id** |  required  | Vault ID of file to detonate | string |  `vault id` 
+**file\_name** |  optional  | Filename to use | string | 
+**hunting\_report\_vault\_id** |  optional  | Threat hunting report that represents current state of the hunting workflow | string |  `vault id` 
+**full\_report** |  optional  | Receive full TiScale metadata in a response | boolean | 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.parameter\.vault\_id | string |  `pe file`  `pdf`  `flash`  `apk`  `jar`  `doc`  `xls`  `ppt`  `vault id` 
-action\_result\.parameter\.file\_name | string |  `file name` 
-action\_result\.data\.\*\.info\.file\.file\_type | string | 
-action\_result\.message | string | 
-action\_result\.status | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
-action\_result\.data\.\*\.info\.file\.file\_subtype | string | 
-action\_result\.data\.\*\.classification\.classification | string | 
-action\_result\.data\.\*\.info\.classification\.factor | numeric | 
-action\_result\.data\.\*\.indicators\.\*\.priority | numeric | 
-action\_result\.data\.\*\.indicators\.\*\.category | numeric | 
-action\_result\.data\.\*\.indicators\.\*\.description | string | 
-action\_result\.data\.\*\.interesting\_strings\.\*\.category | string | 
-action\_result\.data\.\*\.interesting\_strings\.\*\.values\.\* | string |  `url`  `ip` 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.valid\_from | string | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.public\_key\_modulus | string | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.expired | boolean | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.signature | string | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.valid\_to | string | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.version | numeric | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.signature\_algorithm | string | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.serial\_number | string |  `md5`  `sha1` 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.thumbprint | string |  `sha256`  `sha1` 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.issuer | string | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.public\_key\_exponent | string | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.thumbprint\_algorithm | string | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.subject | string |  `url` 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.extensions\.\*\.is\_critical | boolean | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.extensions\.\*\.name | string | 
-action\_result\.data\.\*\.metadata\.certificate\.certificates\.\*\.extensions\.\*\.value | string | 
-action\_result\.data\.\*\.info\.identification\.version | string | 
-action\_result\.data\.\*\.info\.identification\.name | string | 
-action\_result\.data\.\*\.info\.identification\.success | boolean | 
-action\_result\.data\.\*\.info\.identification\.author | string | 
-action\_result\.data\.\*\.tc\_report\.\*\.info\.file\.file\_type | string | 
-action\_result\.data\.\*\.tc\_report\.\*\.info\.file\.file\_name | string |  `file name` 
-action\_result\.data\.\*\.tc\_report\.\*\.info\.file\.file\_subtype | string | 
-action\_result\.data\.\*\.tc\_report\.\*\.info\.file\.file\.entropy | numeric | 
-action\_result\.data\.\*\.tc\_report\.\*\.info\.file\.file\.path | string | 
-action\_result\.data\.\*\.tc\_report\.\*\.info\.file\.size | numeric | 
-action\_result\.data\.\*\.tc\_report\.\*\.info\.file\.hashes\.\*\.name | string | 
-action\_result\.data\.\*\.tc\_report\.\*\.info\.file\.hashes\.\*\.value | string |  `md5`  `sha1`  `sha256` 
-action\_result\.data\.\*\.classification\.yara\.\*\.identifier | string | 
-action\_result\.data\.\*\.classification\.yara\.\*\.hash | string |  `sha1` 
-action\_result\.data\.\*\.classification\.yara\.\*\.filename | string |  `file name` 
-action\_result\.data\.\*\.classification\.yara\.\*\.is\_malicious | boolean | 
-action\_result\.data\.\*\.classification\.yara\.\*\.ns | string | 
-action\_result\.data\.\*\.classification\.yara\.\*\.tags\.\* | string | 
-action\_result\.message | string | 
+action\_result\.parameter\.file\_name | string | 
+action\_result\.parameter\.file\_vault\_id | string |  `vault id` 
+action\_result\.parameter\.full\_report | string | 
+action\_result\.parameter\.hunting\_report\_vault\_id | string |  `vault id` 
+action\_result\.data | string | 
+action\_result\.data\.\*\.hunting\_report\_vault\_id | string | 
+action\_result\.data\.\*\.readable\_summary\.classification\.classification | string | 
+action\_result\.data\.\*\.readable\_summary\.classification\.description | string | 
+action\_result\.data\.\*\.readable\_summary\.classification\.reason | string | 
+action\_result\.data\.\*\.readable\_summary\.classification\.threat\.description | string | 
+action\_result\.data\.\*\.readable\_summary\.classification\.threat\.factor | numeric | 
+action\_result\.data\.\*\.readable\_summary\.classification\.threat\.name | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric | 
