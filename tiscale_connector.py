@@ -363,8 +363,8 @@ class TISCALEConnector(BaseConnector):
         except BaseException:
             self.set_status(
                 phantom.APP_ERROR,
-                'Connectivity failed, check the server name and API key.\n')
-            self.append_to_message('Test Connectivity failed.\n')
+                'Connectivity failed, check the server name and API key\n')
+            self.append_to_message(TISCALE_ERR_TEST_CONNECTIVITY + '\n')
             return self.get_status()
 
         if (phantom.is_fail(ret_val)):

@@ -169,9 +169,6 @@
                     "data_type": "string",
                     "example_values": [
                         "03bc73261e9700198d996582ba43a641be831cb4"
-                    ],
-                    "contains": [
-                        "file vault id"
                     ]
                 },
                 {
@@ -187,9 +184,6 @@
                     "data_type": "string",
                     "example_values": [
                         "03bc73261e9700198d996582ba43a641be831cb4"
-                    ],
-                    "contains": [
-                        "hunting report vault id"
                     ]
                 },
                 {
