@@ -1,2 +1,2 @@
 **Unreleased**
-Compatibility changes for Python 3 support
+* Compatibility changes for Python 3 support
