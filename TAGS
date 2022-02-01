@@ -1,104 +1,0 @@
-
-a1000-logo_0.svg,47
-<?xml version=1,0
-	<linearGradient id=12,643
-
-a1000_test_connectivity.pdf,586
-Š§Ş‘í¯T=T44,4901
-gÚÛqISÈÖ(ç;77w³õL9cj/u6“Oh‰ù†ÑJÖ9z¥“ß»şİÏ¨†ï–9ìú…öŠ¥İ¨bÆ×å>+œÖª§«{£³ÒĞKµ»Ó¾v«v45,5077
-¹Gjâ¨£çğèÑZ×Æ»íÂîª"¢å8"Àêiîº—g¶:ú›Äôó&¢RbİvíÇr7*+W‹©Œp\qÉŞPVÜèµõ†¦ã%m7¸òÕI$±±¯’TG.ê"&åL"`Ænn49,6441
-ˆ©Ã«MËLŞç¹[/4wš:{å54”•u¾	â{šì#7ÑÍV«S¼½¹ëàî¢ÕØ©µƒ(k™ÔwË}$‹_ÍG7“#ò‹ñ¿ş¿9ãªo•–AnÓ—-[q§Šjin&P²YßïÚÆCYµÎó•Uª¼2nãÙìòP]â¸ßUUrºRÜä)[5`XUEê^e=iÜqÜjM7YY|£¾X®L·]ià}+–h9ø§…h9ø§50,6573
-äTEEÇ¡r¡ª®q^v‰5ÊsuUÌ‰æUFª§©rF™˜£³«|JêÕº.b£k¾šèûÄÇÒ~‰úwlêwl70,12957
-äTEEÇ¡r¡ª®q^v‰5ÊsuUÌ‰æUFª§©rF™˜£³«|JêÕº.b£k¾šèûÄÇÒ~‰úwlêÕÍ]ÅSÑqûSÑq70,12957
-
-display_report.html,96
-Inforeport{{ forloop.counter0 }}172,4203
-Process Infoprocess{{ forloop.counter0 }}330,10380
-
-reversinglabs_template.html,237
-ReversingLabs Advanced Malware Analysis Platformmain134,2689
-Click here to receive the detailed report on the file uploaded to the ReversingLabs TISCALE Malware Analysis Platform &#8599;sidebar150,3327
-{% endblock %}footer160,4319
-
-reversinglabs_template.html.orig.2016-11-16-1,881
-{% block custom_title_prop %}{% if title_logo %}style=style5,161
-    body,9,418
-        margin:margin16,516
-        padding:padding17,534
-        list-style:none;none18,553
-        display:inline;inline21,598
-        margin:margin22,622
-        padding:padding23,640
-        padding:5px 10px;px26,679
-        background:#ddd;ddd27,705
-        width:1060px;px33,780
-        margin:0 auto;34,802
-        background-color:#fff;fff35,825
-        padding-top: 30px;px36,856
-        float: left;43,970
-        width: 540px;px44,991
-        padding: 0 30px 10px px45,1013
-        width: 500px;px48,1066
-        float: right;49,1088
-        padding: 0 0 0 10px;px50,1110
-        color: #f2293c;f2293c73,1587
-        clear:both;both110,2342
-        padding:5px 10px;px111,2362
-       margin:margin114,2410
-<div id=118,2443
-    <div id=144,3289
-
-reversinglabs-tiscale.json,214
-    "consolidate_widgets": true,15,603
-        "required": true,22,841
-        "required": true,29,1065
-        "required": true,43,1404
-        "read_only": true,68,2315
-            "required": true,78,2645
-
-reversinglabs_view.py,28
-def file_reputation(18,455
-
-tiscale_connector.py,804
-def __unicode__(43,890
-class A1000Connector(47,957
-    def __init__(114,3585
-    def initialize(121,3735
-    def _parse_report_status_msg(136,4115
-    def _parse_error(187,6284
-    def _make_rest_call(206,7080
-    def _get_file_dict(255,9408
-    def _test_connectivity(275,10073
-    def _normalize_into_list(304,11310
-    def _normalize_children_into_list(317,11652
-    def _check_detonated_report(329,11986
-    def _poll_task_status(349,12719
-    def _get_report(393,14180
-    def _save_file_to_vault(416,14840
-    def _get_sample(468,16943
-    def _get_platform_id(483,17492
-    def _get_pcap(497,17803
-    def validate_parameters(518,18511
-    def _detonate_url(537,19058
-    def _get_vault_file_sha256(574,20210
-    def _detonate_file(605,21372
-    def handle_action(656,23197
-
-tiscale_view.py,134
-def json_dump_view(20,439
-def all_results(29,764
-def parse_report(47,1267
-def get_ctx_result(76,1954
-def display_report(136,3504
-
-tiscale_consts.py,0
-
-rl.png,0
-
-json_dump.html,0
-
-__init__.py,0
-
-exclude_files.txt,0
-
-a1000-logo-218x128.png,0

@@ -5,9 +5,9 @@
 
 <style>
 
-    .widget-container {
-      width: 1170px !important;
-    }
+.widget-container {
+    width: 1170px !important;
+}
 
     body,
     html {
@@ -26,13 +26,9 @@
     }
     #header {
         padding:5px 10px;
-        background:#ddd;
     }
     h1 {
-       margin:0;
-    }
-    h2.head::after {
-       display:none;
+        margin:0;
     }
     #wrap {
         width:1060px;
@@ -44,29 +40,63 @@
         margin-bottom: 20px;
         white-space: normal;
     }
-    #main {
-        float: left;
-        width: 540px;
-        padding: 0 30px 10px 0;
+    .column {
+      float: left;
     }
-    #sidebar {
-        width: 500px;
-        float: right;
+
+    .left, .middle {
+      width: 25%;
+    }
+
+    .right {
+      width: 50%;
+    }
+
+    /* Clear floats after the columns */
+    .content_row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+    .left {
+        float: left;
+        width: 25%;
         padding: 0 0 0 10px;
     }
-    .rl-data-label {
+    .right {
+        width: 40%;
+        float: left;
+        padding: 0 0 0 10px;
+        margin: 0;
+    }
+    .middle {
+        width: 35%;
+        float: left;
+        padding: 0 0 0 10px;
+    }
+    .rl-data-label-2 {
         display: inline-block;
-        width: 170px;
+        width: 60px;
+        font-weight: 500;
+    }
+    .rl-data-label-hash {
+        display: inline-block;
+        width: 50px;
         font-weight: 500;
     }
     .rl-data-label-util {
         padding-bottom: 50px;
         float: left;
     }
+    .rl-data-label-classification{
+        display: inline-block;
+        width: 85px;
+        font-weight: 500;
+    }
     .tb-cell {
         border-bottom: 1px solid #eaeaea;
         padding: 6px 0px;
-        font-weight: 300;
+        font-weight: 500;
     }
     .tb-cell:last-child {
         border-bottom: none;
@@ -112,60 +142,520 @@
     .highlight {
         font-weight: 500;
     }
-    #footer {
+    .footer {
         clear:both;
         padding:5px 10px;
     }
-    #footer p {
-       margin:0;
+    .footer p {
+        margin:0;
+    }
+    .header-align {
+        color: black;
+        text-align: center;
+    }
+    .row {
+        margin: 0;
+    }
+    .MALICIOUS {
+        color: #d00000;
+    }
+    .SUSPICIOUS {
+        color: #f8a80d;
+    }
+    .UNDEFINED {
+        color: #ffb53c;
+    }
+    .UNKNOWN {
+        color: #3d3d3d;
+    }
+    .KNOWN {
+        color: #94b60a;
+    }
+    .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+        background-color: #e1e6eb;
+        color: black;
+    }
+    .nav-link:focus, .nav-link:hover {
+        text-decoration: none;
+        background-color: #eee;
+        color: black;
+    }
+    .c-app-run-widget {
+        height: 680px;
+        width: 100%;
+        position: relative;
     }
 </style>
+
 
 <div id="reversinglabs">
 </div>
 
-{% if results|length == 0 %}
-    <div class="tb-cell ellipsis rl-result-hash">
-        <span class="rl-data-label">No record found</span>
-    </div>
-{% else %}
 <div id="wrap">
-    <div id="main">
-
-        <h2 class="head">ReversingLabs Advanced Malware Analysis Platform</h2>
-
-        <div class="tb-cell ellipsis rl-result-hash">
-            <span class="rl-data-label">File name:</span>
-            {{ results.0.file.file_name }}
+    <div class="row">
+        <div class="footer">
+            <h2 class="head" style="text-align: center;">ReversingLabs Advanced Malware Analysis Platform</h2>
         </div>
-        <div class="tb-cell ellipsis rl-result-hash">
-            <span class="rl-data-label">Threat name: </span>
-            {{ results.0.classification.scan_results.0.result }}
-        </div>
-        <div class="tb-cell ellipsis rl-result-hash">
-            <span class="rl-data-label">File type: </span>
-            {{ results.0.info.file.file_type }}
-        </div>
-        <div class="tb-cell ellipsis rl-result-hash">
-            <span class="rl-data-label">File subtype: </span>
-            {{ results.0.info.file.file_subtype }}
-        </div>
-        <div class="tb-cell ellipsis rl-result-hash">
-            <span class="rl-data-label">Child objects: </span>
-            {{ results|length }}
-        </div>
-
     </div>
-    <div id="sidebar">
-        {% for indicator in results.0.indicators %}
-        <p>{{ indicator.description }}</p>
-        {% endfor %}
+    <div class="row">
+        <div class="left">
+            <div class="tb-cell">
+                <span class="rl-data-label-2">Size:</span>
+                {{ parameters.readable_summary.sample.size }}
+            </div>
+            <div class="tb-cell">
+                <span class="rl-data-label-2">Type:</span>
+                {{ parameters.readable_summary.sample.type }}
+            </div>
+            <div class="tb-cell">
+                <span class="rl-data-label-2">Extracted:</span>
+                {{ parameters.readable_summary.sample.extracted }}
+            </div>
+        </div>
+
+        <div class="middle">
+            {% if parameters.readable_summary.classification.classification == "MALICIOUS" %}
+            <div class="tb-cell MALICIOUS">
+                <span class="rl-data-label-classification">Classification:</span>
+                <b>{{ parameters.readable_summary.classification.classification }}</b>
+            </div>
+
+            {% elif parameters.readable_summary.classification.classification == "SUSPICIOUS" %}
+            <div class="tb-cell SUSPICIOUS">
+                <span class="rl-data-label-classification">Classification:</span>
+                <b>{{ parameters.readable_summary.classification.classification }}</b>
+            </div>
+
+            {% elif parameters.readable_summary.classification.classification == "GOODWARE" %}
+            <div class="tb-cell KNOWN">
+                <span class="rl-data-label-classification">Classification:</span>
+                <b>{{ parameters.readable_summary.classification.classification }}</b>
+            </div>
+
+            {% else %}
+            <div class="tb-cell">
+                <span class="rl-data-label-classification">Classification:</span>
+                <b>{{ parameters.readable_summary.classification.classification }}</b>
+            </div>
+            {% endif %}
+
+            <div class="tb-cell">
+                <span class="rl-data-label-classification">Threat Name:</span>
+                {{ parameters.readable_summary.classification.threat.name }}
+            </div>
+            <div class="tb-cell">
+                <span class="rl-data-label-classification">Description:</span>
+                {{ parameters.readable_summary.classification.description }}
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="tb-cell" style="text-align: left">
+                <span class="rl-data-label-hash">MD5:</span>
+                {{ parameters.readable_summary.sample.md5 }}
+            </div>
+            <div class="tb-cell" style="text-align: left">
+                <span class="rl-data-label-hash">SHA1:</span>
+                {{ parameters.readable_summary.sample.sha1 }}
+            </div>
+            <div class="tb-cell" style="text-align: left">
+                <span class="rl-data-label-hash">SHA256:</span>
+                {{ parameters.readable_summary.sample.sha256 }}
+            </div>
+        </div>
     </div>
 
-    <div id="footer">
+    <div class="row" style="margin-top: 20px">
+        {% if parameters.readable_summary.classification.threat.description  %}
+        <div class="footer">
+            {{ parameters.readable_summary.classification.threat.description }}
+        </div>
+        {% endif %}
+        {% if parameters.readable_summary.sample.description %}
+        <div class="footer">
+            {{ parameters.readable_summary.sample.description }}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <div class="tb-cell rl-result-hash">
+            <span class="rl-data-label">Classification reason:</span>
+            {{ parameters.readable_summary.classification.reason }}
+        </div>
+    </div>
+    <div class="panel-group" id="accordion">
+        {% if parameters.readable_summary.attack %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title" style="margin: 0">
+                    <a class="btn btn-light" type="button" data-toggle="collapse" data-parent="#accordion" href="#collapseAttack" style="color: #171d21; width: 15%">
+                            ATT&CK
+                    </a>
+                </h2>
+            </div>
+            <div id="collapseAttack" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <div class="row" style="margin-left: 20px">
+                        <div class="row" style="width: 100%">
+                            <div style="float: left;width: 10%;padding-top: 5px;font-size: 17px;">
+                                <span class="">Tactics:</span>
+                            </div>
+                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                {% for item in parameters.readable_summary.attack %}
+                                    {% if item.first %}
+                                        <li class="nav-item">
+                                            <a class="nav-link show active" id="pills-{{item.index}}-tab" data-toggle="pill" href="#pills-{{item.index}}" role="tab" aria-controls="pills-{{item.index}}" aria-selected="true">{{item.name}}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="pills-{{item.index}}-tab" data-toggle="pill" href="#pills-{{item.index}}" role="tab" aria-controls="pills-{{item.index}}" aria-selected="false">{{item.name}}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="row" style="width: 100%">
+                            <div class="tab-content" id="pills-tabContent">
+                                {% for item in parameters.readable_summary.attack %}
+                                    {% if item.first %}
+                                        <div class="tab-pane fade active show" id="pills-{{item.index}}" role="tabpanel" aria-labelledby="pills-{{item.index}}-tab">
+                                            <div class="row" style="margin-left: 5px; width: 100%"><b>{{item.description}}</b></div>
+
+                                            <div class="panel-group" id="accordionAttack">
+                                                {% for technique in item.techniques %}
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h2 class="panel-title" style="margin: 0">
+                                                            <a class="btn btn-light text-dark" type="button" data-toggle="collapse" data-parent="#accordionAttack" href="#technique-{{technique.id}}">
+                                                                [{{technique.id}}] {{technique.name}}
+                                                            </a>
+                                                        </h2>
+                                                    </div>
+                                                    <div id="technique-{{technique.id}}" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            {% for indicator in technique.static_analysis_indicators %}
+                                                                 <div style="margin-left: 25px;"><b>{{indicator}}</b></div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="tab-pane fade" id="pills-{{item.index}}" role="tabpanel" aria-labelledby="pills-{{item.index}}-tab">
+                                            <div class="row" style="margin-left: 5px; width: 100%"><b>{{item.description}}</b></div>
+
+                                            <div class="panel-group" id="accordionAttack">
+                                                {% for technique in item.techniques %}
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h2 class="panel-title" style="margin: 0">
+                                                            <a class="btn btn-light text-dark" type="button" data-toggle="collapse" data-parent="#accordionAttack" href="#technique-{{technique.id}}">
+                                                                [{{technique.id}}] {{technique.name}}
+                                                            </a>
+                                                        </h2>
+                                                    </div>
+                                                    <div id="technique-{{technique.id}}" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            {% for indicator in technique.static_analysis_indicators %}
+                                                                 <div style="margin-left: 25px;"><b>{{indicator}}</b></div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title" style="margin: 0">
+                    <a class="btn btn-light" type="button" data-toggle="collapse" data-parent="#accordion" href="#collapseCloudHunting" style="color: #171d21; width: 15%">
+                        Cloud Hunting
+                    </a>
+                </h2>
+            </div>
+            <div id="collapseCloudHunting" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <table class="table table-hover bg-light">
+                        <thead>
+                            <tr>
+                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>QUERY STATUS</b></th>
+                                {% for key in parameters.readable_summary.reordered_cloud_hunting.categories %}
+                                <th style="color: #000000;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>{{ key }}</b></th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr style="color: black; text-align: center">
+                                <th style="color: #6c818b;  text-align: center; font-weight:normal" scope="row">Completed</th>
+                                {% for item in parameters.readable_summary.reordered_cloud_hunting.completed %}
+                                    <td>{{item}}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr style="color: black; text-align: center">
+                                <th style="color: #6c818b;  text-align: center; font-weight:normal" scope="row">Skipped</th>
+                                {% for item in parameters.readable_summary.reordered_cloud_hunting.skipped %}
+                                    <td>{{item}}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr style="color: black; text-align: center">
+                                <th style="color: #6c818b;  text-align: center; font-weight:normal" scope="row">Pending</th>
+                                {% for item in parameters.readable_summary.reordered_cloud_hunting.pending %}
+                                    <td>{{item}}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr style="color: black; text-align: center">
+                                <th style="color: #6c818b;  text-align: center; font-weight:normal" scope="row">Failed</th>
+                                {% for item in parameters.readable_summary.reordered_cloud_hunting.failed %}
+                                    <td>{{item}}</td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title" style="margin: 0">
+                    <a class="btn btn-light" type="button" data-toggle="collapse" data-parent="#accordion" href="#collapseCloudHuntingActions" style="color: #171d21; width: 15%">
+                        Cloud Hunting Actions
+                    </a>
+                </h2>
+            </div>
+            <div id="collapseCloudHuntingActions" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <div class="row" style="margin-left: 20px">
+                        <div style="float: left;width: 10%;padding-top: 5px;font-size: 17px;">
+                            <span class="">Status:</span>
+                        </div>
+                        <ul class="nav nav-pills mb-3" id="pills-tab-cloud-query" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link show active" id="pills-cloud-complete-tab" data-toggle="pill" href="#pills-cloud-complete" role="tab" aria-controls="pills-cloud-complete" aria-selected="true">Completed</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-cloud-unresolved-tab" data-toggle="pill" href="#pills-cloud-unresolved" role="tab" aria-controls="pills-cloud-unresolved" aria-selected="false">{{parameters.cloud_unresolved_name}}</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="pills-tab-cloud-queryContent" style="width: 100%">
+                            <div class="tab-pane fade active show" id="pills-cloud-complete" role="tabpanel" aria-labelledby="pills-cloud-complete-tab">
+                                <div class="row">
+                                    <table class="table table-hover bg-light">
+                                        <thead>
+                                            <tr>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>TYPE</b></th>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>TERM</b></th>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>MALICIOUS</b></th>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>DESCRIPTION</b></th>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>CLASSIFICATION</b></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for query in parameters.cloud_complete %}
+                                            {% for query_term in query.query_terms %}
+                                                <tr style="color: black; text-align: center">
+                                                    <td>{{query.query_type}}</td>
+                                                    <td>{{query_term.term}}</td>
+                                                    <td>{{query_term.malicious}}</td>
+                                                    <td>{{query_term.description}}</td>
+                                                    {% if query_term.classification == "MALICIOUS" %}
+                                                        <td class="MALICIOUS"><b>{{query_term.classification}}</b></td>
+                                                    {% elif query_term.classification == "SUSPICIOUS" %}
+                                                        <td class="SUSPICIOUS"><b>{{query_term.classification}}</b></td>
+                                                    {% elif query_term.classification == "GOODWARE" %}
+                                                        <td class="KNOWN"><b>{{query_term.classification}}</b></td>
+                                                    {% else %}
+                                                        <td><b>{{query_term.classification}}</b></td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="pills-cloud-unresolved" role="tabpanel" aria-labelledby="pills-cloud-unresolved-tab" style="width: 100%">
+                                <table class="table table-hover bg-light">
+                                    <thead>
+                                        <tr>
+                                            <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>TYPE</b></th>
+                                            <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>TERM</b></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for query in parameters.cloud_unresolved %}
+                                        {% for query_term in query.query_terms %}
+                                            <tr style="color: black; text-align: center">
+                                                <td>{{query.query_type}}</td>
+                                                <td>{{query_term.term}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if parameters.readable_summary.reordered_local_hunting.completed or parameters.readable_summary.reordered_local_hunting.skipped or parameters.readable_summary.reordered_local_hunting.pending or parameters.readable_summary.reordered_local_hunting.failed %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title" style="margin: 0">
+                    <a class="btn btn-light" type="button" data-toggle="collapse" data-parent="#accordion" href="#collapseLocalHunting" style="color: #171d21; width: 15%">
+                        Local Hunting
+                    </a>
+                </h2>
+            </div>
+            <div id="collapseLocalHunting" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <table class="table table-hover bg-light">
+                        <thead>
+                            <tr>
+                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>QUERY STATUS</b></th>
+                                {% for key in parameters.readable_summary.reordered_local_hunting.categories %}
+                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>{{ key }}</b></th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr style="color: black; text-align: center">
+                                <th style="color: #6c818b;  text-align: center; font-weight:normal" scope="row">Completed</th>
+                                {% for item in parameters.readable_summary.reordered_local_hunting.completed %}
+                                    <td>{{item}}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr style="color: black; text-align: center">
+                                <th style="color: #6c818b;  text-align: center; font-weight:normal" scope="row">Skipped</th>
+                                {% for item in parameters.readable_summary.reordered_local_hunting.skipped %}
+                                    <td>{{item}}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr style="color: black; text-align: center">
+                                <th style="color: #6c818b;  text-align: center; font-weight:normal" scope="row">Pending</th>
+                                {% for item in parameters.readable_summary.reordered_local_hunting.pending %}
+                                    <td>{{item}}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr style="color: black; text-align: center">
+                                <th style="color: #6c818b;  text-align: center; font-weight:normal" scope="row">Failed</th>
+                                {% for item in parameters.readable_summary.reordered_local_hunting.failed %}
+                                    <td>{{item}}</td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title" style="margin: 0">
+                    <a class="btn btn-light" type="button" data-toggle="collapse" data-parent="#accordion" href="#collapseLocalHuntingActions" style="color: #171d21; width: 15%">
+                        Local Hunting Actions
+                    </a>
+                </h2>
+            </div>
+            <div id="collapseLocalHuntingActions" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <div class="row" style="margin-left: 20px">
+                        <div style="float: left;width: 10%;padding-top: 5px;font-size: 17px;">
+                            <span class="">Status:</span>
+                        </div>
+                        <ul class="nav nav-pills mb-3" id="pills-tab-local-query" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link show active" id="pills-local-complete-tab" data-toggle="pill" href="#pills-local-complete" role="tab" aria-controls="pills-local-complete" aria-selected="true">Completed</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-local-unresolved-tab" data-toggle="pill" href="#pills-local-unresolved" role="tab" aria-controls="pills-local-unresolved" aria-selected="false">{{parameters.local_unresolved_name}}</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="pills-tab-queryContent" style="width: 100%">
+                            <div class="tab-pane fade active show" id="pills-local-complete" role="tabpanel" aria-labelledby="pills-local-complete-tab">
+                                <div class="row">
+                                    <table class="table table-hover bg-light">
+                                        <thead>
+                                            <tr>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>TYPE</b></th>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>TERM</b></th>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>MALICIOUS</b></th>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>DESCRIPTION</b></th>
+                                                <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>CLASSIFICATION</b></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for query in parameters.local_complete %}
+                                            {% for query_term in query.query_terms %}
+                                                <tr style="color: black; text-align: center">
+                                                    <td>{{query.query_type}}</td>
+                                                    <td>{{query_term.term}}</td>
+                                                    <td>{{query_term.malicious}}</td>
+                                                    <td>{{query_term.description}}</td>
+                                                    {% if query_term.classification == "MALICIOUS" %}
+                                                        <td class="MALICIOUS"><b>{{query_term.classification}}</b></td>
+                                                    {% elif query_term.classification == "SUSPICIOUS" %}
+                                                        <td class="SUSPICIOUS"><b>{{query_term.classification}}</b></td>
+                                                    {% elif query_term.classification == "GOODWARE" %}
+                                                        <td class="KNOWN"><b>{{query_term.classification}}</b></td>
+                                                    {% else %}
+                                                        <td><b>{{query_term.classification}}</b></td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="pills-local-unresolved" role="tabpanel" aria-labelledby="pills-local-unresolved-tab" style="width: 100%">
+                                <table class="table table-hover bg-light">
+                                    <thead>
+                                        <tr>
+                                            <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>TYPE</b></th>
+                                            <th style="color: black;text-align: center;font-weight:normal;font-size: 12px;" scope="col"><b>TERM</b></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for query in parameters.local_unresolved %}
+                                        {% for query_term in query.query_terms %}
+                                            <tr style="color: black; text-align: center">
+                                                <td>{{query.query_type}}</td>
+                                                <td>{{query_term.term}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
-{% endif %}
+
+
 {% endblock %}
-
-
