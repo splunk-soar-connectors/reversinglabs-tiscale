@@ -3,19 +3,64 @@
     "name": "RL TitaniumScale Enterprise File Visibility",
     "description": "This app integrates with ReversingLabs TiScale Enterprise Scale File Visibility platform to automate analysis and investigative actions for file samples",
     "type": "sandbox",
-    "main_module": "tiscale_connector.pyc",
-    "app_version": "1.1.3",
-    "utctime_updated": "2019-03-27T22:09:18.000000Z",
+    "main_module": "tiscale_connector.py",
+    "app_version": "2.0.3",
+    "utctime_updated": "2022-02-01T11:47:02.000000Z",
     "package_name": "phantom_tiscale",
     "product_vendor": "ReversingLabs",
     "product_name": "TISCALE",
     "product_version_regex": ".*",
-    "min_phantom_version": "4.0.1068",
+    "min_phantom_version": "5.0.0",
     "publisher": "ReversingLabs",
     "consolidate_widgets": true,
     "logo": "logo_reversinglabs_tiscale.svg",
-    "logo_dark": "logo_reversinglabs_tiscale_dark.svg",
-    "license": "Copyright (c) ReversingLabs Inc 2016-2019",
+    "logo_dark": "logo_reversinglabs_dark_tiscale.svg",
+    "license": "Copyright (c) 2016-2022 Splunk Inc.",
+    "python_version": "3",
+    "pip_dependencies": {
+        "wheel": [
+            {
+                "module": "certifi",
+                "input_file": "wheels/certifi-2021.5.30-py2.py3-none-any.whl"
+            },
+            {
+                "module": "chardet",
+                "input_file": "wheels/chardet-4.0.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "filelock",
+                "input_file": "wheels/filelock-3.0.12-py3-none-any.whl"
+            },
+            {
+                "module": "idna",
+                "input_file": "wheels/idna-3.2-py3-none-any.whl"
+            },
+            {
+                "module": "requests",
+                "input_file": "wheels/requests-2.25.1-py2.py3-none-any.whl"
+            },
+            {
+                "module": "requests_file",
+                "input_file": "wheels/requests_file-1.5.1-py2.py3-none-any.whl"
+            },
+            {
+                "module": "six",
+                "input_file": "wheels/six-1.16.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "tldextract",
+                "input_file": "wheels/tldextract-3.1.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "urllib3",
+                "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
+            },
+            {
+                "module": "rl_threat_hunting",
+                "input_file": "wheels/python_rl_threat_hunting-1.588-py3-none-any.whl"
+            }
+        ]
+    },
     "configuration": {
         "base_url": {
             "data_type": "string",
@@ -23,16 +68,21 @@
             "required": true,
             "order": 0
         },
+        "verify_server_cert": {
+            "data_type": "boolean",
+            "description": "Verify server certificate",
+            "order": 1,
+            "default": true
+        },
         "api_key": {
             "data_type": "password",
             "description": "API Key",
-            "order": 1,
-            "required": false
+            "order": 2
         },
         "timeout": {
             "data_type": "numeric",
             "description": "Detonate timeout in mins",
-            "order": 2,
+            "order": 3,
             "required": true,
             "default": 10
         }
@@ -62,479 +112,116 @@
                 "enabled": false
             },
             "parameters": {
-                "vault_id": {
+                "file_vault_id": {
                     "description": "Vault ID of file to detonate",
                     "data_type": "string",
                     "order": 0,
                     "contains": [
-                        "pe file",
-                        "pdf",
-                        "flash",
-                        "apk",
-                        "jar",
-                        "doc",
-                        "xls",
-                        "ppt",
                         "vault id"
                     ],
-                    "required": true,
-                    "primary": true
+                    "required": true
                 },
                 "file_name": {
                     "description": "Filename to use",
-                    "verbose": "This value will be passed to the sandbox as the name of the file that is pickup up from the vault",
                     "data_type": "string",
-                    "order": 1,
+                    "order": 1
+                },
+                "hunting_report_vault_id": {
+                    "description": "Threat hunting report that represents current state of the hunting workflow",
+                    "data_type": "string",
+                    "order": 2,
                     "contains": [
-                        "file name"
-                    ],
-                    "required": false
+                        "vault id"
+                    ]
+                },
+                "full_report": {
+                    "description": "Receive full TiScale metadata in a response",
+                    "data_type": "boolean",
+                    "order": 3,
+                    "default": true
                 }
             },
             "render": {
                 "type": "custom",
                 "width": 10,
                 "height": 5,
-                "view": "reversinglabs_view.file_reputation",
-                "title": "TISCALE Upload Status"
+                "view": "reversinglabs_view.hunting_visualization",
+                "title": "TiScale Upload Status"
             },
             "output": [
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 3
-                },
-                {
-                    "data_path": "action_result.parameter.vault_id",
-                    "data_type": "string",
-                    "contains": [
-                        "pe file",
-                        "pdf",
-                        "flash",
-                        "apk",
-                        "jar",
-                        "doc",
-                        "xls",
-                        "ppt",
-                        "vault id"
-                    ],
-                    "column_name": "vault_id",
-                    "column_order": 0
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.file_name",
                     "data_type": "string",
-                    "contains": [
-                        "file name"
-                    ],
-                    "column_name": "file_name",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.info.file.file_type",
-                    "data_type": "string",
-                    "column_name": "status",
                     "example_values": [
-                        "PE",
-                        "PE+",
-                        "Document",
-                        "Binary",
-                        "Text",
-                        "ELF32 Little",
-                        "MZ",
-                        "PE16",
-                        "DEX",
-                        "ODEX",
-                        "Image",
-                        "Audio",
-                        "Video",
-                        "Media Container"
-                    ],
-                    "column_order": 2
+                        "Test_Reversinglabs_1.exe"
+                    ]
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.parameter.file_vault_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "03bc73261e9700198d996582ba43a641be831cb4"
+                    ],
+                    "contains": [
+                        "vault id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.full_report",
+                    "data_type": "string",
+                    "example_values": [
+                        false,
+                        true
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.hunting_report_vault_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "03bc73261e9700198d996582ba43a641be831cb4"
+                    ],
+                    "contains": [
+                        "vault id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 3
+                    "data_path": "action_result.data.*.hunting_report_vault_id",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "summary.total_objects",
+                    "data_path": "action_result.data.*.readable_summary.classification.classification",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.readable_summary.classification.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.readable_summary.classification.reason",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.readable_summary.classification.threat.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.readable_summary.classification.threat.factor",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.info.file.file_subtype",
-                    "data_type": "string",
-                    "example_values": [
-                        "None",
-                        "Exe",
-                        "Dll",
-                        ".Net Exe",
-                        "VXD",
-                        "Archive",
-                        "HTML",
-                        ".Net Dll",
-                        "Core",
-                        "SO"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.classification.classification",
-                    "data_type": "string",
-                    "example_values": [
-                        "KNOWN",
-                        "UNKNOWN",
-                        "MALICIOUS",
-                        "SUSPICIOUS"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.info.classification.factor",
-                    "data_type": "numeric",
-                    "example_values": [
-                        "0 - highest trust",
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5 - highest threat"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.indicators.*.priority",
-                    "data_type": "numeric",
-                    "example_values": [
-                        "0 - least interesting",
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                        "6",
-                        "7",
-                        "8",
-                        "9",
-                        "10 - most interesting"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.indicators.*.category",
-                    "data_type": "numeric",
-                    "example_values": [
-                        "0",
-                        "1",
-                        ".",
-                        ".",
-                        ".",
-                        "26",
-                        "27"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.indicators.*.description",
-                    "data_type": "string",
-                    "example_values": [
-                        "Detects/enumerates process modules.",
-                        "Uses anti-debugging methods.",
-                        "Contains references to executable file extensions."
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.interesting_strings.*.category",
-                    "data_type": "string",
-                    "example_values": [
-                        "ipv4",
-                        "ipv6",
-                        "http"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.interesting_strings.*.values.*",
-                    "data_type": "string",
-                    "contains": [
-                        "url",
-                        "ip"
-                    ],
-                    "example_values": [
-                        "127.0.0.1",
-                        "::",
-                        "traderstruthrevealed.com",
-                        "cloud_print.email"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.valid_from",
-                    "data_type": "string",
-                    "example_values": [
-                        "Dec 21 00:00:00 2012 GMT",
-                        "Oct 18 00:00:00 2012 GMT"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.public_key_modulus",
-                    "data_type": "string",
-                    "example_values": [
-                        "B1ACB349544B971C120AD825799122572A6FDCB826C443736BC2BF2E505AFB14C2768E43012543B4A1E245F4E8B77BC374CC22D7B4940002F74DEDBFB4B744246BCD5F453BD144CE43127317828B69B42BCB561EAC721B264D711FB131DDFB51610253A6AAF5492C057845A52F89CEE799E7FE8CE2573F3DC692DC4AF87B33E4790AFBF07588419CFFC5035199AAD76C9F93698765298385C26014C4C8C93B14DAC081F01F0D74DE9222ABCAF7FB747C27E6F74A1B7FA7C39E2DAE8AEAA6E6AA27167D61F7987111BCE250A14BE55DFAE50EA72C9FAA6520D3D896E8C87CA54E4844FF19E24407920BD76884805D6A786445CD60467E54C1137CC579F1C9C171"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.expired",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.signature",
-                    "data_type": "string",
-                    "example_values": [
-                        "03099B8F79EF7F5930AAEF68B5FAE3091DBB4F82065D375FA6529F168DEA1C9209446EF56DEB587C30E8F9698D23730B126F47A9AE3911F82AB19BB01AC38EEB599600ADCE0C4DB2D031A6085C2A2AFCE28A1D574CA86518E979406225966EC7C7376A8321088E41EADDD9573F1D7749872A16065EA6386A2212A35119837EB6"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.valid_to",
-                    "data_type": "string",
-                    "example_values": [
-                        "Dec 29 23:59:59 2020 GMT",
-                        "Jan 29 23:59:59 2016 GMT"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.version",
-                    "data_type": "numeric",
-                    "example_values": [
-                        "1",
-                        "2"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.signature_algorithm",
-                    "data_type": "string",
-                    "example_values": [
-                        "sha1WithRSAEncryption"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.serial_number",
-                    "data_type": "string",
-                    "contains": [
-                        "md5",
-                        "sha1"
-                    ],
-                    "example_values": [
-                        "5200E5AA2556FC1A86ED96C9D64B23C7"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.thumbprint",
-                    "data_type": "string",
-                    "contains": [
-                        "sha256",
-                        "sha1"
-                    ],
-                    "example_values": [
-                        "0CFC19DB681B014BFE3F23CB3A78B67208B4E3D8D7B6A7B1807F7CD6ECB2A54E"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.issuer",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.public_key_exponent",
-                    "data_type": "string",
-                    "example_values": [
-                        "010001"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.thumbprint_algorithm",
-                    "data_type": "string",
-                    "example_values": [
-                        "SHA256",
-                        "SHA1",
-                        "SHA512"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.subject",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.extensions.*.is_critical",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.extensions.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Authority Information Access",
-                        "Netscape Cert Type",
-                        "1.3.6.1.4.1.311.2.1.27"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.certificate.certificates.*.extensions.*.value",
-                    "data_type": "string",
-                    "example_values": [
-                        "Object Signing",
-                        "CA:FALSE",
-                        "keyid:CF:99:A9:EA:7C:16:F4:4B:C9:8E:8F:D2:F0:05:26:EF:E3:D2:A7:9D"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.info.identification.version",
-                    "data_type": "string",
-                    "example_values": [
-                        "Generic",
-                        ""
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.info.identification.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "IconResource",
-                        "ICO",
-                        "AdobeAFM",
-                        "AdobePDX",
-                        "MIDI",
-                        "CBA",
-                        "CAB",
-                        "WISE"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.info.identification.success",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.info.identification.author",
-                    "data_type": "string",
-                    "example_values": [
-                        "ReversingLabs",
-                        ""
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.tc_report.*.info.file.file_type",
-                    "data_type": "string",
-                    "example_values": [
-                        "PE",
-                        "PE+",
-                        "Document",
-                        "Binary",
-                        "Text",
-                        "ELF32 Little",
-                        "MZ",
-                        "PE16",
-                        "DEX",
-                        "ODEX",
-                        "Image",
-                        "Audio",
-                        "Video",
-                        "Media Container"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.tc_report.*.info.file.file_name",
-                    "data_type": "string",
-                    "contains": [
-                        "file name"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.tc_report.*.info.file.file_subtype",
-                    "data_type": "string",
-                    "example_values": [
-                        "None",
-                        "Exe",
-                        "Dll",
-                        ".Net Exe",
-                        "VXD",
-                        "Archive",
-                        "HTML",
-                        ".Net Dll",
-                        "Core",
-                        "SO"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.tc_report.*.info.file.file.entropy",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.tc_report.*.info.file.file.path",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.tc_report.*.info.file.size",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.tc_report.*.info.file.hashes.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "sha1",
-                        "sha256",
-                        "rha0",
-                        "md5"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.tc_report.*.info.file.hashes.*.value",
-                    "data_type": "string",
-                    "contains": [
-                        "md5",
-                        "sha1",
-                        "sha256"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.classification.yara.*.identifier",
-                    "data_type": "string",
-                    "example_values": [
-                        "Win32_Ransomware_Reveton",
-                        ""
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.classification.yara.*.hash",
-                    "data_type": "string",
-                    "contains": [
-                        "sha1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.classification.yara.*.filename",
-                    "data_type": "string",
-                    "contains": [
-                        "file name"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.classification.yara.*.is_malicious",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.classification.yara.*.ns",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.classification.yara.*.tags.*",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.readable_summary.classification.threat.name",
                     "data_type": "string"
                 },
                 {
@@ -542,12 +229,25 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully retrieved results"
+                    ]
+                },
+                {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)"
