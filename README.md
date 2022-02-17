@@ -11,7 +11,7 @@ Minimum Product Version: 5\.0\.0
 This app integrates with ReversingLabs TiScale Enterprise Scale File Visibility platform to automate analysis and investigative actions for file samples
 
 [comment]: # " File: README.md"
-[comment]: # "  Copyright (c) 2016-2022 Splunk Inc."
+[comment]: # "  Copyright (c) ReversingLabs Inc 2016-2022"
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."
