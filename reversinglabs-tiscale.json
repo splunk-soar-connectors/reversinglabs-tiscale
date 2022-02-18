@@ -10,12 +10,12 @@
     "product_vendor": "ReversingLabs",
     "product_name": "TISCALE",
     "product_version_regex": ".*",
-    "min_phantom_version": "5.0.0",
+    "min_phantom_version": "5.1.0",
     "publisher": "ReversingLabs",
     "consolidate_widgets": true,
     "logo": "logo_reversinglabs_tiscale.svg",
     "logo_dark": "logo_reversinglabs_dark_tiscale.svg",
-    "license": "Copyright (c) 2016-2022 Splunk Inc.",
+    "license": "Copyright (c) ReversingLabs Inc 2016-2022",
     "python_version": "3",
     "pip_dependencies": {
         "wheel": [
