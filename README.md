@@ -2,11 +2,11 @@
 # RL TitaniumScale Enterprise File Visibility
 
 Publisher: ReversingLabs  
-Connector Version: 2\.0\.3  
+Connector Version: 2\.0\.5  
 Product Vendor: ReversingLabs  
 Product Name: TISCALE  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.0\.0  
+Minimum Product Version: 5\.1\.0  
 
 This app integrates with ReversingLabs TiScale Enterprise Scale File Visibility platform to automate analysis and investigative actions for file samples
 
