@@ -4,7 +4,7 @@
     "description": "This app integrates with ReversingLabs TiScale Enterprise Scale File Visibility platform to automate analysis and investigative actions for file samples",
     "type": "sandbox",
     "main_module": "tiscale_connector.py",
-    "app_version": "2.0.4",
+    "app_version": "2.0.5",
     "utctime_updated": "2022-02-18T04:22:41.000000Z",
     "package_name": "phantom_tiscale",
     "product_vendor": "ReversingLabs",
